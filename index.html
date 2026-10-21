@@ -8,12 +8,12 @@
         /* --- БАЗОВЫЕ СТИЛИ --- */
         :root {
             --primary: #D4AF37; /* Золотой/латунный акцент */
-            --bg-dark: #1A1A1A;
-            --bg-light: #F8F9FA;
-            --text-main: #333333;
+            --bg-dark: #121212;
+            --bg-light: #F4F4F4;
+            --text-main: #2C2C2C;
             --text-light: #FFFFFF;
             --card-bg: #FFFFFF;
-            --border-color: #E0E0E0;
+            --border-color: #E5E5E5;
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -32,111 +32,146 @@
 
         /* --- ШАПКА (HERO) --- */
         .hero {
-            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
-            color: var(--text-light);
-            padding: 80px 20px;
-            text-align: center;
             position: relative;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 60px 20px 100px;
+            text-align: center;
             overflow: hidden;
         }
 
+        /* Фоновая картинка зала */
         .hero::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?q=80&w=2070&auto=format&fit=crop') center/cover;
-            opacity: 0.2;
+            background: url('front.jpg') center/cover no-repeat;
+            opacity: 0.4; /* Картинка не должна перебивать текст */
             z-index: 0;
+            filter: blur(1px);
+        }
+
+        /* Затемнение поверх картинки (градиент) */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(18,18,18,0.7) 0%, rgba(18,18,18,0.95) 100%);
+            z-index: 1;
         }
 
         .hero-content {
             position: relative;
-            z-index: 1;
-            max-width: 800px;
+            z-index: 2;
+            max-width: 900px;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Логотип */
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            height: 100px; /* Размер логотипа */
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); /* Легкое свечение вокруг */
         }
 
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .hero h2 {
+            font-size: 2.8rem;
             margin-bottom: 10px;
             font-weight: 300;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            line-height: 1.2;
         }
 
         .hero p {
             font-size: 1.2rem;
-            color: #ccc;
-            font-style: italic;
+            color: #cccccc;
+            font-weight: 300;
         }
 
-        /* --- БЫСТРЫЕ ЦИФРЫ --- */
+        /* --- БЫСТРЫЕ ЦИФРЫ (ПЛАШКИ) --- */
         .quick-stats {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
-            padding: 40px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            margin-top: -30px;
+            gap: 15px;
+            padding: 0 20px;
+            max-width: 1100px;
+            margin: -40px auto 40px;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
 
         .stat-card {
             background: var(--card-bg);
-            padding: 20px 30px;
+            padding: 20px 15px;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             text-align: center;
             flex: 1;
-            min-width: 150px;
-            border-top: 4px solid var(--primary);
+            min-width: 160px;
+            border-bottom: 4px solid var(--primary);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
 
         .stat-card h3 {
-            font-size: 2rem;
+            font-size: 1.6rem;
             color: var(--bg-dark);
             margin-bottom: 5px;
+            font-weight: 600;
         }
 
         .stat-card span {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
+            display: block;
         }
 
-        /* --- СЕКЦИИ --- */
+        /* --- КОНТЕЙНЕР --- */
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 20px 20px 60px;
         }
 
         .section-title {
             text-align: center;
-            margin-bottom: 40px;
-            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-size: 1.6rem;
             font-weight: 400;
             position: relative;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #555;
         }
 
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: var(--primary);
-            margin: 15px auto 0;
-        }
-
-        /* --- АККОРДЕОН (КАРТОЧКИ) --- */
+        /* --- АККОРДЕОН --- */
         .accordion-item {
             background: var(--card-bg);
             border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
             border: 1px solid var(--border-color);
             overflow: hidden;
             transition: all 0.3s ease;
@@ -148,7 +183,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 500;
             color: var(--bg-dark);
             background: var(--card-bg);
@@ -156,11 +191,12 @@
         }
 
         .accordion-header:hover {
-            background: #fbfbfb;
+            background: #fafafa;
         }
 
         .accordion-header .icon {
             font-size: 1.5rem;
+            color: var(--primary);
             transition: transform 0.3s;
         }
 
@@ -176,7 +212,7 @@
         }
 
         .accordion-item.active .accordion-content {
-            max-height: 1000px; /* Достаточно для контента */
+            max-height: 1200px;
         }
 
         .content-inner {
@@ -187,6 +223,7 @@
         .content-inner p {
             margin-bottom: 15px;
             margin-top: 15px;
+            font-size: 0.95rem;
         }
 
         .content-inner ul {
@@ -195,8 +232,9 @@
         }
 
         .content-inner ul li {
-            padding: 5px 0 5px 20px;
+            padding: 4px 0 4px 20px;
             position: relative;
+            font-size: 0.95rem;
         }
 
         .content-inner ul li::before {
@@ -211,28 +249,30 @@
         /* --- КНОПКИ СКАЧИВАНИЯ --- */
         .download-group {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            padding: 10px 20px;
+            padding: 10px 18px;
             background: var(--bg-dark);
             color: var(--text-light);
             text-decoration: none;
             border-radius: 4px;
-            font-size: 0.9rem;
-            transition: background 0.3s;
+            font-size: 0.85rem;
+            transition: all 0.3s;
             border: 1px solid var(--bg-dark);
+            font-weight: 500;
         }
 
         .btn:hover {
             background: var(--primary);
             border-color: var(--primary);
             color: var(--bg-dark);
+            transform: translateY(-2px);
         }
 
         .btn-outline {
@@ -247,28 +287,41 @@
 
         .btn-icon {
             margin-right: 8px;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         /* --- ПОДВАЛ --- */
         footer {
             text-align: center;
             padding: 40px 20px;
-            background: var(--bg-dark);
-            color: #888;
-            font-size: 0.9rem;
+            background: #0a0a0a;
+            color: #777;
+            font-size: 0.85rem;
+            border-top: 1px solid #222;
         }
 
         footer a {
             color: var(--primary);
             text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+        footer .copyright {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #555;
         }
 
         /* --- АДАПТИВНОСТЬ --- */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 1.8rem; }
+            .hero h2 { font-size: 1.8rem; }
             .stat-card { min-width: 45%; }
             .accordion-header { font-size: 1rem; }
+            .logo-container img { height: 70px; }
         }
     </style>
 </head>
@@ -277,8 +330,12 @@
     <!-- ШАПКА -->
     <div class="hero">
         <div class="hero-content">
-            <h1>БОЛЬШОЙ КОНЦЕРТНЫЙ ЗАЛ</h1>
-            <p>Технический паспорт площадки «Ковчег»</p>
+            <div class="logo-container">
+                <img src="logo.png" alt="Логотип Ковчег">
+            </div>
+            <h1>Культурный духовно-просветительский центр</h1>
+            <h2>БОЛЬШОЙ КОНЦЕРТНЫЙ ЗАЛ</h2>
+            <p>Технический паспорт зала</p>
         </div>
     </div>
 
@@ -289,16 +346,20 @@
             <span>Мест</span>
         </div>
         <div class="stat-card">
-            <h3>23.2 м</h3>
-            <span>Ширина сцены</span>
+            <h3>12,4–14,4 м</h3>
+            <span>Зеркало сцены</span>
         </div>
         <div class="stat-card">
-            <h3>59 м²</h3>
-            <span>LED Экран</span>
+            <h3>10 м</h3>
+            <span>Глубина сцены</span>
         </div>
         <div class="stat-card">
-            <h3>15</h3>
-            <span>Штанкетов</span>
+            <h3>L-Acoustics</h3>
+            <span>Звук</span>
+        </div>
+        <div class="stat-card">
+            <h3>Yamaha DM7</h3>
+            <span>Пульт</span>
         </div>
     </div>
 
@@ -318,11 +379,11 @@
                     <ul>
                         <li>Сцена: ширина 23,2 м, глубина 10 м.</li>
                         <li>Портал: высота 6,3 м, ширина 15,8 м.</li>
-                        <li>Одежда сцены: черный кабинет (арлекин, кулисы, падуги).</li>
+                        <li>Одежда сцены: черный кабинет (арлекин, 4 плана кулис, падуги, занавесы).</li>
                     </ul>
                     <div class="download-group">
-                        <a href="files/01-Kovcheg_Hall_General_Specs_RU.docx" class="btn" download>
-                            <span class="btn-icon">⬇</span> Скачать общее описание (DOCX)
+                        <a href="files/01-Kovcheg_Hall_General_Specs_RU.pdf" class="btn" download>
+                            <span class="btn-icon">⬇</span> Скачать общее описание (PDF)
                         </a>
                     </div>
                 </div>
@@ -337,10 +398,10 @@
             </div>
             <div class="accordion-content">
                 <div class="content-inner">
-                    <p>Профессиональный световой комплекс (MA2 Light, Art-Net). Приборы Wash, Spot, Beam, PAR от LightSky, Clay Paky, MeanReal.</p>
+                    <p>Профессиональный световой комплекс (MA2 Light, Art-Net). Приборы Wash, Spot, Beam, PAR, Profile, Fresnel. Бренды LightSky, Clay Paky, MeanReal.</p>
                     <div class="download-group">
-                        <a href="files/02-Kovcheg_Hall_Lighting_Specs_RU.docx" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по свету (DOCX)
+                        <a href="files/02-Kovcheg_Hall_Lighting_Specs_RU.pdf" class="btn" download>
+                            <span class="btn-icon">⬇</span> Спецификация по свету (PDF)
                         </a>
                         <a href="files/02A-Kovcheg_Hall_Light_Plot_RU.pdf" class="btn btn-outline" download>
                             <span class="btn-icon">⬇</span> Light Plot (PDF)
@@ -358,13 +419,13 @@
             </div>
             <div class="accordion-content">
                 <div class="content-inner">
-                    <p>Система L-Acoustics, пульт Yamaha DM7, радиомикрофоны ACEMIC, сеть Dante.</p>
+                    <p>Система L-Acoustics, пульт Yamaha DM7, Midas M32, радиосистемы ACEMIC, Shure, подвесные микрофоны, сеть Dante.</p>
                     <div class="download-group">
-                        <a href="files/03-Kovcheg_Hall_Audio_Specs_RU.docx" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по звуку (DOCX)
+                        <a href="files/03-Kovcheg_Hall_Audio_Specs_RU.pdf" class="btn" download>
+                            <span class="btn-icon">⬇</span> Спецификация по звуку (PDF)
                         </a>
-                        <a href="files/03A-Kovcheg_Hall_Audio_Full_Specs_RU.docx" class="btn btn-outline" download>
-                            <span class="btn-icon">⬇</span> Полная спецификация (DOCX)
+                        <a href="files/03A-Kovcheg_Hall_Audio_Full_Specs_RU.pdf" class="btn btn-outline" download>
+                            <span class="btn-icon">⬇</span> Полная спецификация (PDF)
                         </a>
                     </div>
                 </div>
@@ -379,13 +440,13 @@
             </div>
             <div class="accordion-content">
                 <div class="content-inner">
-                    <p>LED-экран 10,24 × 5,76 м (P3.91, 2560×1440). Управление NovaStar VX1000.</p>
+                    <p>LED-экран 10,24 × 5,76 м. Основной рабочий формат — Full HD (16:9). Максимальное разрешение — 2560×1440 (P3.91). Управление NovaStar VX1000.</p>
                     <div class="download-group">
-                        <a href="files/04-Kovcheg_Hall_Video_Specs_RU.docx" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по видео (DOCX)
+                        <a href="files/04-Kovcheg_Hall_Video_Specs_RU.pdf" class="btn" download>
+                            <span class="btn-icon">⬇</span> Спецификация по видео (PDF)
                         </a>
-                        <a href="files/04A-Kovcheg_Hall_Video_Content_Requirements_RU.docx" class="btn btn-outline" download>
-                            <span class="btn-icon">⬇</span> Требования к контенту (DOCX)
+                        <a href="files/04A-Kovcheg_Hall_Video_Content_Requirements_RU.pdf" class="btn btn-outline" download>
+                            <span class="btn-icon">⬇</span> Требования к контенту (PDF)
                         </a>
                     </div>
                 </div>
@@ -395,15 +456,16 @@
         <!-- 5. Механика -->
         <div class="accordion-item">
             <div class="accordion-header">
-                <span>5. Механика сцены</span>
+                <span>5. Верхняя механика сцены</span>
                 <span class="icon">+</span>
             </div>
             <div class="accordion-content">
                 <div class="content-inner">
-                    <p>15 штанкетов (грузоподъемность 300 кг), 3 софитных подъема, грузовой лифт на 2 тонны. Управление только инженером зала.</p>
+                    <p>Компьютерная система управления, антрактно-раздвижной занавес, 15 штанкетов (грузоподъемность 300 кг), 3 софитных подъема, грузовой лифт на 2 тонны.</p>
+                    <p><em>Управление механикой осуществляется исключительно инженером-механиком зала.</em></p>
                     <div class="download-group">
-                        <a href="files/05-Kovcheg_Hall_Rigging_Specs_RU.docx" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по механике (DOCX)
+                        <a href="files/05-Kovcheg_Hall_Rigging_Specs_RU.pdf" class="btn" download>
+                            <span class="btn-icon">⬇</span> Спецификация по механике (PDF)
                         </a>
                     </div>
                 </div>
@@ -418,7 +480,7 @@
             </div>
             <div class="accordion-content">
                 <div class="content-inner">
-                    <p>Схема планшета сцены с метровой сеткой для расстановки декораций.</p>
+                    <p>Схема планшета сцены с метровой сеткой для расстановки декораций и реквизита.</p>
                     <div class="download-group">
                         <a href="files/06A-Kovcheg_Hall_Stage_Grid_RU.pdf" class="btn" download>
                             <span class="btn-icon">⬇</span> Базовая сетка (PDF)
@@ -435,8 +497,14 @@
 
     <!-- ПОДВАЛ -->
     <footer>
-        <p>© Культурный духовно-просветительский центр «Ковчег»</p>
-        <p style="margin-top: 10px;">По вопросам технического согласования обращайтесь к <a href="mailto:teh@kovcheg.ru">техническому директору</a></p>
+        <p>По вопросам технического согласования обращайтесь к техническому директору</p>
+        <p style="margin-top: 5px;"><a href="mailto:kovcheg.teh.otdel@gmail.com">kovcheg.teh.otdel@gmail.com</a></p>
+        
+        <div class="copyright">
+            © 2026 Константин Леонидович Карманов<br>
+            Все права защищены.<br>
+            Техническая поддержка: <a href="mailto:kovcheg.teh.otdel@gmail.com">kovcheg.teh.otdel@gmail.com</a>
+        </div>
     </footer>
 
     <!-- СКРИПТ АККОРДЕОНА -->
@@ -447,12 +515,6 @@
             headers.forEach(header => {
                 header.addEventListener('click', function() {
                     const item = this.parentElement;
-                    
-                    // Закрываем другие (опционально)
-                    // document.querySelectorAll('.accordion-item').forEach(i => {
-                    //     if (i !== item) i.classList.remove('active');
-                    // });
-
                     item.classList.toggle('active');
                 });
             });
