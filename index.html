@@ -7,13 +7,14 @@
     <style>
         /* --- БАЗОВЫЕ СТИЛИ --- */
         :root {
-            --primary: #D4AF37; /* Золотой/латунный акцент */
-            --bg-dark: #121212;
-            --bg-light: #F4F4F4;
-            --text-main: #2C2C2C;
-            --text-light: #FFFFFF;
+            --primary: #C5A059; /* Благородный золотой/латунный */
+            --primary-hover: #B08D4A;
+            --bg-body: #FAF9F6; /* Теплый кремовый фон страницы */
+            --bg-dark: #2A2A2A; /* Темно-серый для текста */
+            --text-main: #333333;
+            --text-light: #F5F5F5;
             --card-bg: #FFFFFF;
-            --border-color: #E5E5E5;
+            --border-color: #EAE8E3;
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -25,19 +26,23 @@
 
         body {
             font-family: var(--font-main);
-            background-color: var(--bg-light);
+            background-color: var(--bg-body);
             color: var(--text-main);
             line-height: 1.6;
         }
 
-        /* --- ШАПКА (HERO) --- */
+        /* --- ШАПКА (HERO) - СВЕТЛАЯ И ВОЗДУШНАЯ --- */
         .hero {
             position: relative;
-            background-color: var(--bg-dark);
+            background-color: #1a1a1a;
             color: var(--text-light);
-            padding: 60px 20px 100px;
+            padding: 100px 20px 120px;
             text-align: center;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Фоновая картинка зала */
@@ -46,17 +51,20 @@
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: url('front.jpg') center/cover no-repeat;
-            opacity: 0.4; /* Картинка не должна перебивать текст */
+            opacity: 0.85; /* Картинка видна намного лучше */
             z-index: 0;
-            filter: blur(1px);
         }
 
-        /* Затемнение поверх картинки (градиент) */
+        /* Легкое затемнение снизу для читаемости текста */
         .hero::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(to bottom, rgba(18,18,18,0.7) 0%, rgba(18,18,18,0.95) 100%);
+            background: linear-gradient(
+                to bottom, 
+                rgba(0,0,0,0.3) 0%, 
+                rgba(0,0,0,0.7) 100%
+            );
             z-index: 1;
         }
 
@@ -65,43 +73,46 @@
             z-index: 2;
             max-width: 900px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         /* Логотип */
         .logo-container {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
         }
 
         .logo-container img {
-            height: 100px; /* Размер логотипа */
+            height: 110px;
             width: auto;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); /* Легкое свечение вокруг */
+            /* Магия: убирает черный фон у PNG логотипа */
+            mix-blend-mode: screen; 
+            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
         }
 
         .hero h1 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--primary);
+            letter-spacing: 4px;
+            color: #d1d1d1;
             margin-bottom: 15px;
             font-weight: 400;
         }
 
         .hero h2 {
-            font-size: 2.8rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
             font-weight: 300;
-            letter-spacing: 1px;
-            line-height: 1.2;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .hero p {
-            font-size: 1.2rem;
-            color: #cccccc;
-            font-weight: 300;
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 400;
+            letter-spacing: 1px;
         }
 
         /* --- БЫСТРЫЕ ЦИФРЫ (ПЛАШКИ) --- */
@@ -112,37 +123,39 @@
             gap: 15px;
             padding: 0 20px;
             max-width: 1100px;
-            margin: -40px auto 40px;
+            margin: -50px auto 40px;
             position: relative;
             z-index: 3;
         }
 
         .stat-card {
             background: var(--card-bg);
-            padding: 20px 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 25px 15px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
             text-align: center;
             flex: 1;
-            min-width: 160px;
-            border-bottom: 4px solid var(--primary);
-            transition: transform 0.2s;
+            min-width: 170px;
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
         .stat-card h3 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             color: var(--bg-dark);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
         .stat-card span {
             font-size: 0.8rem;
-            color: #666;
+            color: #777;
             text-transform: uppercase;
             letter-spacing: 1px;
             display: block;
@@ -152,38 +165,47 @@
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px 20px 60px;
+            padding: 20px 20px 80px;
         }
 
         .section-title {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             font-size: 1.6rem;
-            font-weight: 400;
+            font-weight: 300;
             position: relative;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #555;
+            letter-spacing: 3px;
+            color: var(--bg-dark);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+            margin: 15px auto 0;
         }
 
         /* --- АККОРДЕОН --- */
         .accordion-item {
             background: var(--card-bg);
             border-radius: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             border: 1px solid var(--border-color);
             overflow: hidden;
             transition: all 0.3s ease;
         }
 
         .accordion-header {
-            padding: 20px 25px;
+            padding: 22px 25px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 500;
             color: var(--bg-dark);
             background: var(--card-bg);
@@ -191,13 +213,14 @@
         }
 
         .accordion-header:hover {
-            background: #fafafa;
+            background: #FCFCFA;
         }
 
         .accordion-header .icon {
             font-size: 1.5rem;
             color: var(--primary);
             transition: transform 0.3s;
+            line-height: 1;
         }
 
         .accordion-item.active .accordion-header .icon {
@@ -208,22 +231,24 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.4s ease-out;
-            background: #FAFAFA;
+            background: #FCFCFA;
         }
 
         .accordion-item.active .accordion-content {
-            max-height: 1200px;
+            max-height: 1500px;
         }
 
         .content-inner {
             padding: 0 25px 25px 25px;
             border-top: 1px solid var(--border-color);
+            background: var(--card-bg);
         }
 
         .content-inner p {
             margin-bottom: 15px;
-            margin-top: 15px;
-            font-size: 0.95rem;
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #444;
         }
 
         .content-inner ul {
@@ -232,37 +257,38 @@
         }
 
         .content-inner ul li {
-            padding: 4px 0 4px 20px;
+            padding: 6px 0 6px 24px;
             position: relative;
             font-size: 0.95rem;
+            color: #555;
         }
 
         .content-inner ul li::before {
             content: '•';
             color: var(--primary);
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             position: absolute;
             left: 0;
-            top: 0;
+            top: 2px;
         }
 
         /* --- КНОПКИ СКАЧИВАНИЯ --- */
         .download-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            padding: 10px 18px;
+            padding: 12px 22px;
             background: var(--bg-dark);
             color: var(--text-light);
             text-decoration: none;
-            border-radius: 4px;
-            font-size: 0.85rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
             transition: all 0.3s;
             border: 1px solid var(--bg-dark);
             font-weight: 500;
@@ -271,57 +297,67 @@
         .btn:hover {
             background: var(--primary);
             border-color: var(--primary);
-            color: var(--bg-dark);
+            color: #fff;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3);
         }
 
         .btn-outline {
             background: transparent;
             color: var(--bg-dark);
+            border: 1px solid #ccc;
         }
 
         .btn-outline:hover {
             background: var(--bg-dark);
             color: var(--text-light);
+            border-color: var(--bg-dark);
         }
 
         .btn-icon {
-            margin-right: 8px;
-            font-size: 1rem;
+            margin-right: 10px;
+            font-size: 1.1rem;
         }
 
         /* --- ПОДВАЛ --- */
         footer {
             text-align: center;
-            padding: 40px 20px;
-            background: #0a0a0a;
-            color: #777;
-            font-size: 0.85rem;
-            border-top: 1px solid #222;
+            padding: 50px 20px;
+            background: #1A1A1A;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin-bottom: 10px;
         }
 
         footer a {
             color: var(--primary);
             text-decoration: none;
             transition: color 0.2s;
+            border-bottom: 1px dotted var(--primary);
         }
 
         footer a:hover {
             color: #fff;
+            border-bottom: 1px solid #fff;
         }
 
         footer .copyright {
-            margin-top: 15px;
+            margin-top: 30px;
             font-size: 0.8rem;
-            color: #555;
+            color: #666;
+            line-height: 1.8;
         }
 
         /* --- АДАПТИВНОСТЬ --- */
         @media (max-width: 768px) {
-            .hero h2 { font-size: 1.8rem; }
+            .hero { padding: 80px 20px 100px; }
+            .hero h2 { font-size: 2.2rem; }
             .stat-card { min-width: 45%; }
-            .accordion-header { font-size: 1rem; }
-            .logo-container img { height: 70px; }
+            .accordion-header { font-size: 1rem; padding: 18px 20px; }
+            .logo-container img { height: 80px; }
         }
     </style>
 </head>
@@ -343,23 +379,23 @@
     <div class="quick-stats">
         <div class="stat-card">
             <h3>500</h3>
-            <span>Мест</span>
+            <span>Комфортных мест</span>
         </div>
         <div class="stat-card">
-            <h3>12,4–14,4 м</h3>
+            <h3>13м х 10м</h3>
             <span>Зеркало сцены</span>
         </div>
         <div class="stat-card">
-            <h3>10 м</h3>
-            <span>Глубина сцены</span>
+            <h3>59 м2</h3>
+            <span>LED экран 16:9</span>
         </div>
         <div class="stat-card">
             <h3>L-Acoustics</h3>
-            <span>Звук</span>
+            <span>Премиальный звук</span>
         </div>
         <div class="stat-card">
-            <h3>Yamaha DM7</h3>
-            <span>Пульт</span>
+            <h3>15 штанкетов</h3>
+            <span>Верхняя механика</span>
         </div>
     </div>
 
@@ -398,7 +434,7 @@
             </div>
             <div class="accordion-content">
                 <div class="content-inner">
-                    <p>Профессиональный световой комплекс (MA2 Light, Art-Net). Приборы Wash, Spot, Beam, PAR, Profile, Fresnel. Бренды LightSky, Clay Paky, MeanReal.</p>
+                    <p>Профессиональный световой комплекс (MA2 Light, Art-Net). Приборы Wash, Spot, Beam, PAR, Profile, Fresnel. Бренды LightSky, Clay Paky, MeanReal и др.</p>
                     <div class="download-group">
                         <a href="files/02-Kovcheg_Hall_Lighting_Specs_RU.pdf" class="btn" download>
                             <span class="btn-icon">⬇</span> Спецификация по свету (PDF)
@@ -419,7 +455,7 @@
             </div>
             <div class="accordion-content">
                 <div class="content-inner">
-                    <p>Система L-Acoustics, пульт Yamaha DM7, Midas M32, радиосистемы ACEMIC, Shure, подвесные микрофоны, сеть Dante.</p>
+                    <p>Система L-Acoustics, пульт Yamaha DM7 / Midas M32, радиосистемы ACEMIC / Shure, 12 подвесных микрофонов, сеть Dante.</p>
                     <div class="download-group">
                         <a href="files/03-Kovcheg_Hall_Audio_Specs_RU.pdf" class="btn" download>
                             <span class="btn-icon">⬇</span> Спецификация по звуку (PDF)
@@ -498,12 +534,11 @@
     <!-- ПОДВАЛ -->
     <footer>
         <p>По вопросам технического согласования обращайтесь к техническому директору</p>
-        <p style="margin-top: 5px;"><a href="mailto:kovcheg.teh.otdel@gmail.com">kovcheg.teh.otdel@gmail.com</a></p>
+        <p><a href="mailto:kovcheg.teh.otdel@gmail.com">kovcheg.teh.otdel@gmail.com</a></p>
         
         <div class="copyright">
             © 2026 Константин Леонидович Карманов<br>
-            Все права защищены.<br>
-            Техническая поддержка: <a href="mailto:kovcheg.teh.otdel@gmail.com">kovcheg.teh.otdel@gmail.com</a>
+            Все права защищены.
         </div>
     </footer>
 
