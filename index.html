@@ -83,11 +83,13 @@
         }
 
         .logo-container img {
-            height: 110px;
+            height: 140px;
             width: auto;
-            /* Магия: убирает черный фон у PNG логотипа */
-            mix-blend-mode: screen; 
-            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
+            mix-blend-mode: screen;
+            /* Создаем мягкое растворение краев (виден только центр) */
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 75%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 75%);
+            filter: drop-shadow(0 0 15px rgba(0,0,0, 0.8));
         }
 
         .hero h1 {
