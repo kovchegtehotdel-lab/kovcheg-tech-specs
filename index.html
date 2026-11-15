@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Технический паспорт | Большой концертный зал «Ковчег»</title>
+    <title>Технические паспорта залов | Ковчег</title>
     <style>
-        /* --- БАЗОВЫЕ СТИЛИ --- */
         :root {
-            --primary: #C5A059; /* Благородный золотой/латунный */
+            --primary: #C5A059;
             --primary-hover: #B08D4A;
-            --bg-body: #FAF9F6; /* Теплый кремовый фон страницы */
-            --bg-dark: #2A2A2A; /* Темно-серый для текста */
+            --bg-body: #FAF9F6;
+            --bg-dark: #2A2A2A;
             --text-main: #333333;
             --text-light: #F5F5F5;
             --card-bg: #FFFFFF;
@@ -18,561 +17,559 @@
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: var(--font-main);
             background-color: var(--bg-body);
             color: var(--text-main);
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            cursor: none; 
+            background-color: var(--bg-body); 
+            position: relative;
         }
 
-        /* --- ШАПКА (HERO) - СВЕТЛАЯ И ВОЗДУШНАЯ --- */
-        .hero {
-            position: relative;
-            background-color: #1a1a1a;
-            color: var(--text-light);
-            padding: 100px 20px 120px;
-            text-align: center;
+        /* --- ЖИВОЙ ФОН СТРАНИЦЫ (Еле заметные пылинки) --- */
+        .page-particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
             overflow: hidden;
+        }
+        .page-particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: floatPageParticle linear infinite;
+        }
+        @keyframes floatPageParticle {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-50px) translateX(20px); }
+            100% { transform: translateY(-100px) translateX(0); opacity: 0; }
+        }
+
+        /* --- ПРЕЛОАДЕР --- */
+        .preloader {
+            position: fixed;
+            inset: 0;
+            background: #111;
+            z-index: 10000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        
+        .preloader.loaded {
+            opacity: 0;
+            visibility: hidden;
         }
 
-        /* Фоновая картинка зала */
-        .hero::before {
+        .preloader-logo {
+            height: 180px; 
+            width: auto;
+            filter: brightness(0) invert(1) drop-shadow(0 0 40px rgba(197,160,89,0.8)) drop-shadow(0 0 80px rgba(255,255,255,0.4));
+            margin-bottom: 40px;
+            animation: pulseLogo 2s infinite alternate;
+        }
+
+        .preloader-bar {
+            width: 300px; 
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preloader-bar::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('front.jpg') center/cover no-repeat;
-            opacity: 0.85; /* Картинка видна намного лучше */
-            z-index: 0;
+            top: 0; left: 0; height: 100%; width: 0%;
+            background: var(--primary);
+            animation: loadBar 2s ease-in-out forwards;
+            box-shadow: 0 0 10px var(--primary);
         }
 
-        /* Легкое затемнение снизу для читаемости текста */
+        @keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes pulseLogo { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.05); opacity: 1; } }
+
+        /* --- КАСТОМНЫЙ КУРСОР --- */
+        .cursor-dot {
+            width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+        }
+        .cursor-ring {
+            width: 40px; height: 40px; border: 1px solid rgba(197, 160, 89, 0.5); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+        }
+        .cursor-ring.hover {
+            width: 70px; height: 70px; border-color: var(--primary);
+            background-color: rgba(197, 160, 89, 0.1);
+        }
+
+        /* --- КИНЕМАТОГРАФИЧНАЯ ШАПКА --- */
+        .hero {
+            position: relative;
+            height: 100vh; 
+            overflow: hidden;
+            perspective: 1000px;
+            background-color: var(--bg-body);
+            z-index: 2; /* Поверх фоновых пылинок */
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: -20px; 
+            background: url('front_main.jpg') center center/cover no-repeat;
+            z-index: 0;
+            animation: cinematicIn 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, breathe 25s ease-in-out infinite alternate 2.5s;
+            will-change: transform;
+        }
+
+        .particles-container {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px rgba(255,255,255,0.4);
+            opacity: 0;
+            animation: floatParticle linear infinite;
+        }
+
         .hero::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(
-                to bottom, 
-                rgba(0,0,0,0.3) 0%, 
-                rgba(0,0,0,0.7) 100%
-            );
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 70%, rgba(250, 249, 246, 1) 100%);
             z-index: 1;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* Логотип */
+        /* --- ЛОГОТИП --- */
         .logo-container {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
+            position: absolute;
+            top: 50px; left: 5%; z-index: 4;
+            animation: fadeInDown 1.5s ease-out 0.5s forwards;
+            opacity: 0;
+            will-change: transform;
         }
-
         .logo-container img {
-            height: 140px;
-            width: auto;
-            mix-blend-mode: screen;
-            /* Создаем мягкое растворение краев (виден только центр) */
-            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 75%);
-            mask-image: radial-gradient(circle, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 75%);
-            filter: drop-shadow(0 0 15px rgba(0,0,0, 0.8));
+            height: 120px; width: auto;
+            filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255,255,255,0.6)) drop-shadow(0 0 10px rgba(197,160,89,0.4));
+            animation: logoPulse 4s ease-in-out infinite;
         }
 
-        .hero h1 {
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: #d1d1d1;
-            margin-bottom: 15px;
-            font-weight: 400;
+        /* --- ТЕКСТ --- */
+        .hero-content {
+            position: absolute;
+            top: 70px; right: 5%; z-index: 4;
+            text-align: right; display: inline-grid; grid-template-columns: 1fr; gap: 10px;
+            animation: fadeInRight 1.5s ease-out 0.8s forwards;
+            opacity: 0;
+            will-change: transform;
         }
 
-        .hero h2 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            line-height: 1.1;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        .hero-content h1 {
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 4px;
+            color: #ffffff; font-weight: 400; line-height: 1.8;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.8); justify-self: end; 
         }
 
-        .hero p {
-            font-size: 1.3rem;
-            color: var(--primary);
-            font-weight: 400;
-            letter-spacing: 1px;
+        .hero-content h2 {
+            font-size: 6rem; margin: 0; font-weight: 200; letter-spacing: 12px;
+            line-height: 1; text-transform: uppercase; text-shadow: 0 4px 25px rgba(0,0,0,0.7);
+            justify-self: end; margin-right: -12px; 
+            background: linear-gradient(120deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) 35%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.9) 65%, rgba(255,255,255,0.9) 100%);
+            background-size: 200% auto; -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; animation: shine 5s linear infinite; 
         }
 
-        /* --- БЫСТРЫЕ ЦИФРЫ (ПЛАШКИ) --- */
-        .quick-stats {
+        .hero-content p {
+            width: 100%; text-align: right; font-size: 0.9rem; font-weight: 600;
+            text-transform: uppercase; margin-top: 5px; color: var(--primary);
+            text-shadow: 0 0 10px rgba(197, 160, 89, 0.6), 0 0 20px rgba(197, 160, 89, 0.3);
+            letter-spacing: 6px; margin-right: -6px; 
+        }
+
+        /* --- МАЯЧОК ВНИЗУ --- */
+        .scroll-indicator {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            z-index: 4; width: 26px; height: 42px; border: 2px solid rgba(255,255,255,0.6);
+            border-radius: 20px; display: flex; justify-content: center;
+            transition: border-color 0.3s; opacity: 0; animation: fadeInDown 1.5s ease-out 1.2s forwards;
+        }
+        .scroll-indicator:hover { border-color: var(--primary); }
+        .scroll-indicator::after {
+            content: ''; width: 4px; height: 8px; background: var(--primary);
+            border-radius: 2px; margin-top: 8px; animation: scrollWheel 2s infinite;
+        }
+
+        /* --- СЕТКА ЗАЛОВ --- */
+        .halls-container {
+            flex: 1; max-width: 1200px; margin: 0 auto; padding: 120px 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 50px; width: 100%; position: relative; z-index: 3; background-color: transparent; /* Прозрачный фон, чтобы видеть пылинки */
+        }
+
+        /* --- КАРТОЧКИ ЗАЛОВ С КИНЕМАТОГРАФИЧНЫМ ЗУМОМ --- */
+        .hall-card {
+            background: var(--card-bg); border-radius: 20px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06); border: 1px solid rgba(197, 160, 89, 0.15);
+            text-decoration: none; color: inherit; display: flex; flex-direction: column;
+            position: relative;
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+
+        .hall-card.visible {
+            opacity: 1; transform: translateY(0);
+        }
+
+        /* Эффект парения при наведении */
+        .hall-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.15);
+            border-color: rgba(197, 160, 89, 0.4);
+        }
+
+        /* Золотая рамка */
+        .hall-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(197,160,89,0) 0%, rgba(197,160,89,1) 50%, rgba(197,160,89,0) 100%) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .hall-card:hover::before { opacity: 1; }
+
+        /* Золотой блик */
+        .hall-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .hall-card:hover::after { left: 150%; }
+
+        /* Контейнер для фото и контента */
+        .card-inner {
+            width: 100%;
+            height: 100%;
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            padding: 0 20px;
-            max-width: 1100px;
-            margin: -50px auto 40px;
+            flex-direction: column;
             position: relative;
             z-index: 3;
         }
 
-        .stat-card {
-            background: var(--card-bg);
-            padding: 25px 15px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-            text-align: center;
-            flex: 1;
-            min-width: 170px;
-            border: 1px solid var(--border-color);
-            border-top: 4px solid var(--primary);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* --- КИНЕМАТОГРАФИЧНЫЙ ЗУМ ФОТО --- */
+        .hall-card-img { 
+            height: 280px; 
+            background-size: cover; 
+            background-position: center; 
+            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); /* Плавный зум */
         }
 
-        .stat-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        .hall-card:hover .hall-card-img {
+            transform: scale(1.1); /* Увеличение при наведении */
+        }
+        
+        .hall-card-content { padding: 40px; flex: 1; display: flex; flex-direction: column; }
+        .hall-card-content h3 { font-size: 1.6rem; font-weight: 500; color: var(--bg-dark); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .hall-card-content p { font-size: 1rem; color: #666; flex: 1; margin-bottom: 30px; }
+
+        .hall-card-actions {
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid var(--border-color); padding-top: 25px;
         }
 
-        .stat-card h3 {
-            font-size: 1.5rem;
-            color: var(--bg-dark);
-            margin-bottom: 8px;
-            font-weight: 600;
+        .card-btn {
+            display: inline-flex; align-items: center; color: var(--bg-dark);
+            font-weight: 600; font-size: 0.95rem; text-transform: uppercase;
+            letter-spacing: 1px; text-decoration: none; 
+            transition: transform 0.2s ease, color 0.3s;
+            will-change: transform;
         }
+        .card-btn:hover { color: var(--primary); }
+        .card-btn span { margin-left: 8px; transition: transform 0.3s ease; }
+        .card-btn:hover span { transform: translateX(5px); }
 
-        .stat-card span {
-            font-size: 0.8rem;
-            color: #777;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: block;
-        }
-
-        /* --- КОНТЕЙНЕР --- */
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px 20px 80px;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 1.6rem;
-            font-weight: 300;
-            position: relative;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--bg-dark);
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 40px;
-            height: 2px;
-            background: var(--primary);
-            margin: 15px auto 0;
-        }
-
-        /* --- АККОРДЕОН --- */
-        .accordion-item {
-            background: var(--card-bg);
-            border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .accordion-header {
-            padding: 22px 25px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.15rem;
-            font-weight: 500;
-            color: var(--bg-dark);
-            background: var(--card-bg);
-            transition: background 0.3s;
-        }
-
-        .accordion-header:hover {
-            background: #FCFCFA;
-        }
-
-        .accordion-header .icon {
-            font-size: 1.5rem;
-            color: var(--primary);
-            transition: transform 0.3s;
-            line-height: 1;
-        }
-
-        .accordion-item.active .accordion-header .icon {
-            transform: rotate(45deg);
-        }
-
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out;
-            background: #FCFCFA;
-        }
-
-        .accordion-item.active .accordion-content {
-            max-height: 1500px;
-        }
-
-        .content-inner {
-            padding: 0 25px 25px 25px;
-            border-top: 1px solid var(--border-color);
-            background: var(--card-bg);
-        }
-
-        .content-inner p {
-            margin-bottom: 15px;
-            margin-top: 20px;
-            font-size: 1rem;
-            color: #444;
-        }
-
-        .content-inner ul {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-
-        .content-inner ul li {
-            padding: 6px 0 6px 24px;
-            position: relative;
-            font-size: 0.95rem;
-            color: #555;
-        }
-
-        .content-inner ul li::before {
-            content: '•';
-            color: var(--primary);
-            font-size: 1.4rem;
-            position: absolute;
-            left: 0;
-            top: 2px;
-        }
-
-        /* --- КНОПКИ СКАЧИВАНИЯ --- */
-        .download-group {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 12px 22px;
-            background: var(--bg-dark);
-            color: var(--text-light);
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            border: 1px solid var(--bg-dark);
-            font-weight: 500;
-        }
-
-        .btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--bg-dark);
-            border: 1px solid #ccc;
-        }
-
-        .btn-outline:hover {
-            background: var(--bg-dark);
-            color: var(--text-light);
-            border-color: var(--bg-dark);
-        }
-
-        .btn-icon {
-            margin-right: 10px;
-            font-size: 1.1rem;
-        }
+        .card-btn.secondary { color: #888; font-size: 0.9rem; }
+        .card-btn.secondary:hover { color: var(--primary); }
+        .card-btn.secondary svg { margin-right: 6px; width: 16px; height: 16px; fill: currentColor; }
 
         /* --- ПОДВАЛ --- */
-        footer {
-            text-align: center;
-            padding: 50px 20px;
-            background: #1A1A1A;
-            color: #999;
-            font-size: 0.9rem;
-        }
+        footer { text-align: center; padding: 60px 20px; background: #111; color: #999; font-size: 0.9rem; border-top: 1px solid #222; }
+        footer p { margin-bottom: 12px; }
+        footer a { color: var(--primary); text-decoration: none; transition: color 0.3s; border-bottom: 1px dotted var(--primary); }
+        footer a:hover { color: #fff; border-bottom: 1px solid #fff; }
+        footer .copyright { margin-top: 30px; font-size: 0.8rem; color: #555; line-height: 1.8; }
 
-        footer p {
-            margin-bottom: 10px;
-        }
-
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: color 0.2s;
-            border-bottom: 1px dotted var(--primary);
-        }
-
-        footer a:hover {
-            color: #fff;
-            border-bottom: 1px solid #fff;
-        }
-
-        footer .copyright {
-            margin-top: 30px;
-            font-size: 0.8rem;
-            color: #666;
-            line-height: 1.8;
-        }
+        /* --- АНИМАЦИИ --- */
+        @keyframes shine { to { background-position: -200% center; } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes breathe { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+        @keyframes scrollWheel { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(15px); opacity: 0; } }
+        @keyframes cinematicIn { 0% { transform: scale(1.2); opacity: 0.5; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
+        @keyframes logoPulse { 0%, 100% { filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255,255,255,0.6)) drop-shadow(0 0 10px rgba(197,160,89,0.4)); } 50% { filter: brightness(0) invert(1) drop-shadow(0 0 25px rgba(255,255,255,0.9)) drop-shadow(0 0 20px rgba(197,160,89,0.8)); } }
+        @keyframes floatParticle { 0% { transform: translateY(0) scale(1); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { transform: translateY(-100vh) scale(1.5); opacity: 0; } }
 
         /* --- АДАПТИВНОСТЬ --- */
+        @media (max-width: 1024px) {
+            .hero-content h2 { font-size: 4.5rem; letter-spacing: 8px; margin-right: -8px; }
+            .hero-content p { letter-spacing: 5px; margin-right: -5px; }
+        }
+
         @media (max-width: 768px) {
-            .hero { padding: 80px 20px 100px; }
-            .hero h2 { font-size: 2.2rem; }
-            .stat-card { min-width: 45%; }
-            .accordion-header { font-size: 1rem; padding: 18px 20px; }
+            body { cursor: auto; background-color: var(--bg-body); }
+            .cursor-dot, .cursor-ring, .page-particles { display: none; }
+            .preloader { display: none; } 
+
+            .hero { display: flex; flex-direction: column; justify-content: space-between; padding: 30px 5%; }
+            .logo-container { position: static; margin-bottom: 20px; opacity: 1; animation: none; }
+            .hero-content { position: static; display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 50px; margin-bottom: auto; opacity: 1; animation: none; }
+            .hero-content h2 { font-size: 3.5rem; letter-spacing: 5px; margin-right: -5px; }
+            .hero-content h1 { font-size: 0.75rem; letter-spacing: 2px; }
+            .hero-content p { font-size: 0.8rem; letter-spacing: 4px; text-align: center; margin-right: -4px; }
             .logo-container img { height: 80px; }
+            .scroll-indicator { display: none; }
+            
+            .halls-container { padding: 60px 15px; gap: 30px; grid-template-columns: 1fr; }
+            .hall-card-img { height: 220px; }
+            .hall-card-content { padding: 25px; }
+            .hall-card { transform: none !important; opacity: 1 !important; }
+            .hall-card:hover { transform: none; }
+            .hall-card:hover .hall-card-img { transform: none; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Фоновые пылинки по всей странице -->
+    <div class="page-particles" id="pageParticles"></div>
+
+    <!-- ПРЕЛОАДЕР -->
+    <div class="preloader" id="preloader">
+        <img src="logo.png" alt="Логотип" class="preloader-logo">
+        <div class="preloader-bar"></div>
+    </div>
+
+    <!-- Кастомный курсор -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
     <!-- ШАПКА -->
     <div class="hero">
-        <div class="hero-content">
-            <div class="logo-container">
-                <img src="logo.png" alt="Логотип Ковчег">
-            </div>
-            <h1>Культурный духовно-просветительский центр</h1>
-            <h2>БОЛЬШОЙ КОНЦЕРТНЫЙ ЗАЛ</h2>
-            <p>Технический паспорт зала</p>
+        <div class="hero-bg" id="heroBg"></div>
+        <div class="particles-container" id="particles"></div>
+        
+        <div class="logo-container" id="logoContainer">
+            <img src="logo.png" alt="Логотип Ковчег">
         </div>
+        
+        <div class="hero-content" id="heroContent">
+            <h1>Культурный<br>Духовно-просветительский<br>Центр</h1>
+            <h2>КОВЧЕГ</h2>
+            <p>ТЕХНИЧЕСКИЕ ВОЗМОЖНОСТИ</p>
+        </div>
+
+        <a href="#halls" class="scroll-indicator"></a>
     </div>
 
-    <!-- БЫСТРЫЕ ЦИФРЫ -->
-    <div class="quick-stats">
-        <div class="stat-card">
-            <h3>500</h3>
-            <span>Комфортных мест</span>
-        </div>
-        <div class="stat-card">
-            <h3>13м х 10м</h3>
-            <span>Зеркало сцены</span>
-        </div>
-        <div class="stat-card">
-            <h3>59 м2</h3>
-            <span>LED экран 16:9</span>
-        </div>
-        <div class="stat-card">
-            <h3>L-Acoustics</h3>
-            <span>Премиальный звук</span>
-        </div>
-        <div class="stat-card">
-            <h3>15 штанкетов</h3>
-            <span>Верхняя механика</span>
-        </div>
-    </div>
-
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
-    <div class="container">
-        <h2 class="section-title">Технические разделы</h2>
-
-        <!-- 1. Общее описание -->
-        <div class="accordion-item">
-            <div class="accordion-header">
-                <span>1. Общее описание зала</span>
-                <span class="icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <div class="content-inner">
-                    <p>Зрительный зал на 500 мест (495 кресел). Ширина 22,7 м, глубина 19,3 м.</p>
-                    <ul>
-                        <li>Сцена: ширина 23,2 м, глубина 10 м.</li>
-                        <li>Портал: высота 6,3 м, ширина 15,8 м.</li>
-                        <li>Одежда сцены: черный кабинет (арлекин, 4 плана кулис, падуги, занавесы).</li>
-                    </ul>
-                    <div class="download-group">
-                        <a href="files/01-Kovcheg_Hall_General_Specs_RU.pdf" class="btn" download>
-                            <span class="btn-icon">⬇</span> Скачать общее описание (PDF)
+    <!-- СЕТКА ЗАЛОВ -->
+    <div class="halls-container" id="halls">
+        <div class="hall-card">
+            <div class="card-inner">
+                <div class="hall-card-img" style="background-image: url('front_bkz.jpg');"></div>
+                <div class="hall-card-content">
+                    <h3>Большой концертный зал</h3>
+                    <p>500 мест, LED-экран 59 м², премиальный звук L-Acoustics, верхняя механика сцены.</p>
+                    <div class="hall-card-actions">
+                        <a href="index_bkz.html" class="card-btn magnetic">Открыть паспорт <span>→</span></a>
+                        <a href="gallery_bkz.html" class="card-btn secondary magnetic">
+                            <svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v12h16V6H4zm8 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg> Фото
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Свет -->
-        <div class="accordion-item">
-            <div class="accordion-header">
-                <span>2. Световое оборудование</span>
-                <span class="icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <div class="content-inner">
-                    <p>Профессиональный световой комплекс (MA2 Light, Art-Net). Приборы Wash, Spot, Beam, PAR, Profile, Fresnel. Бренды LightSky, Clay Paky, MeanReal и др.</p>
-                    <div class="download-group">
-                        <a href="files/02-Kovcheg_Hall_Lighting_Specs_RU.pdf" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по свету (PDF)
-                        </a>
-                        <a href="files/02A-Kovcheg_Hall_Light_Plot_RU.pdf" class="btn btn-outline" download>
-                            <span class="btn-icon">⬇</span> Light Plot (PDF)
+        <div class="hall-card">
+            <div class="card-inner">
+                <div class="hall-card-img" style="background-image: url('front_mtz.jpg');"></div>
+                <div class="hall-card-content">
+                    <h3>Малый театральный зал</h3>
+                    <p>100 мест, лазерный проектор 8200 ANSI, цифровой звук Behringer X32, свет MA Lighting.</p>
+                    <div class="hall-card-actions">
+                        <a href="index_mtz.html" class="card-btn magnetic">Открыть паспорт <span>→</span></a>
+                        <a href="gallery_mtz.html" class="card-btn secondary magnetic">
+                            <svg viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v12h16V6H4zm8 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg> Фото
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- 3. Звук -->
-        <div class="accordion-item">
-            <div class="accordion-header">
-                <span>3. Звуковое оборудование</span>
-                <span class="icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <div class="content-inner">
-                    <p>Система L-Acoustics, пульт Yamaha DM7 / Midas M32, радиосистемы ACEMIC / Shure, 12 подвесных микрофонов, сеть Dante.</p>
-                    <div class="download-group">
-                        <a href="files/03-Kovcheg_Hall_Audio_Specs_RU.pdf" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по звуку (PDF)
-                        </a>
-                        <a href="files/03A-Kovcheg_Hall_Audio_Full_Specs_RU.pdf" class="btn btn-outline" download>
-                            <span class="btn-icon">⬇</span> Полная спецификация (PDF)
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. Видео -->
-        <div class="accordion-item">
-            <div class="accordion-header">
-                <span>4. Видео и LED-экран</span>
-                <span class="icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <div class="content-inner">
-                    <p>LED-экран 10,24 × 5,76 м. Основной рабочий формат — Full HD (16:9). Максимальное разрешение — 2560×1440 (P3.91). Управление NovaStar VX1000.</p>
-                    <div class="download-group">
-                        <a href="files/04-Kovcheg_Hall_Video_Specs_RU.pdf" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по видео (PDF)
-                        </a>
-                        <a href="files/04A-Kovcheg_Hall_Video_Content_Requirements_RU.pdf" class="btn btn-outline" download>
-                            <span class="btn-icon">⬇</span> Требования к контенту (PDF)
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. Механика -->
-        <div class="accordion-item">
-            <div class="accordion-header">
-                <span>5. Верхняя механика сцены</span>
-                <span class="icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <div class="content-inner">
-                    <p>Компьютерная система управления, антрактно-раздвижной занавес, 15 штанкетов (грузоподъемность 300 кг), 3 софитных подъема, грузовой лифт на 2 тонны.</p>
-                    <p><em>Управление механикой осуществляется исключительно инженером-механиком зала.</em></p>
-                    <div class="download-group">
-                        <a href="files/05-Kovcheg_Hall_Rigging_Specs_RU.pdf" class="btn" download>
-                            <span class="btn-icon">⬇</span> Спецификация по механике (PDF)
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. Планировка -->
-        <div class="accordion-item">
-            <div class="accordion-header">
-                <span>6. Планировка сцены (Stage Grid)</span>
-                <span class="icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <div class="content-inner">
-                    <p>Схема планшета сцены с метровой сеткой для расстановки декораций и реквизита.</p>
-                    <div class="download-group">
-                        <a href="files/06A-Kovcheg_Hall_Stage_Grid_RU.pdf" class="btn" download>
-                            <span class="btn-icon">⬇</span> Базовая сетка (PDF)
-                        </a>
-                        <a href="files/06B-Kovcheg_Hall_Stage_Grid_Full_RU.pdf" class="btn btn-outline" download>
-                            <span class="btn-icon">⬇</span> Полная версия с размерами (PDF)
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-	        <!-- 7. Фотогалерея -->
-        <div class="accordion-item">
-            <div class="accordion-header">
-                <span>7. Техническая фотогалерея зала</span>
-                <span class="icon">+</span>
-            </div>
-            <div class="accordion-content">
-                <div class="content-inner">
-                    <p>Смотрите на фото технические возможности Большого концертного зала.</p>
-                    <div class="download-group">
-                        <a href="gallery.html" class="btn">
-                            <span class="btn-icon">▣</span> Открыть галерею
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <!-- ПОДВАЛ -->
     <footer>
         <p>По вопросам технического согласования обращайтесь к техническому директору</p>
         <p><a href="mailto:kovcheg.teh.otdel@gmail.com">kovcheg.teh.otdel@gmail.com</a></p>
-        
         <div class="copyright">
             © 2026 Константин Леонидович Карманов<br>
             Все права защищены.
         </div>
     </footer>
 
-    <!-- СКРИПТ АККОРДЕОНА -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const headers = document.querySelectorAll('.accordion-header');
-            
-            headers.forEach(header => {
-                header.addEventListener('click', function() {
-                    const item = this.parentElement;
-                    item.classList.toggle('active');
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Прелоадер
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.classList.add('loaded');
+                document.body.style.overflow = 'auto';
+            }, 2000); 
+            document.body.style.overflow = 'hidden';
+
+            // 2. Курсор
+            const cursorDot = document.getElementById('cursorDot');
+            const cursorRing = document.getElementById('cursorRing');
+            const links = document.querySelectorAll('a, .hall-card');
+            let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+            });
+
+            function animateRing() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top = ringY + 'px';
+                requestAnimationFrame(animateRing);
+            }
+            animateRing();
+
+            links.forEach(link => {
+                link.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+                link.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+            });
+
+            // 3. Параллакс
+            const heroBg = document.getElementById('heroBg');
+            const logoContainer = document.getElementById('logoContainer');
+            const heroContent = document.getElementById('heroContent');
+            const hero = document.querySelector('.hero');
+
+            hero.addEventListener('mousemove', (e) => {
+                const x = (window.innerWidth - e.pageX * 2) / 100;
+                const y = (window.innerHeight - e.pageY * 2) / 100;
+                heroBg.style.transform = `translateX(${x * 0.5}px) translateY(${y * 0.5}px) scale(1.05)`;
+                logoContainer.style.transform = `translateX(${x * 0.2}px) translateY(${y * 0.2}px)`;
+                heroContent.style.transform = `translateX(${x * 0.1}px) translateY(${y * 0.1}px)`;
+            });
+
+            hero.addEventListener('mouseleave', () => {
+                heroBg.style.transform = 'translateX(0) translateY(0) scale(1)';
+                logoContainer.style.transform = 'translateX(0) translateY(0)';
+                heroContent.style.transform = 'translateX(0) translateY(0)';
+            });
+
+            // 4. Появление карточек при скролле
+            const cards = document.querySelectorAll('.hall-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            cards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 0.15}s`;
+                observer.observe(card);
+            });
+
+            // 5. Магнитные кнопки
+            const magneticBtns = document.querySelectorAll('.magnetic');
+            magneticBtns.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translate(0, 0)';
                 });
             });
+
+            // 6. Частицы в шапке
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 40;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                const duration = Math.random() * 15 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.bottom = `-10px`;
+                particlesContainer.appendChild(particle);
+            }
+
+            // 7. ФОНОВЫЕ ПЫЛИНКИ ПО ВСЕЙ СТРАНИЦЕ
+            const pageParticlesContainer = document.getElementById('pageParticles');
+            const pageParticleCount = 20; // Количество пылинок на всей странице
+            for (let i = 0; i < pageParticleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('page-particle');
+                const size = Math.random() * 6 + 2; // Размер от 2 до 8 пикселей
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                const duration = Math.random() * 20 + 15; // Долгое парение
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                pageParticlesContainer.appendChild(particle);
+            }
         });
     </script>
 </body>
