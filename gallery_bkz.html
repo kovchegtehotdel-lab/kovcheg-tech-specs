@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Большой зал | Фотогалерея</title>
+    <style>
+        :root {
+            --primary: #C5A059;
+            --primary-hover: #B08D4A;
+            --bg-body: #FAF9F6;
+            --bg-dark: #2A2A2A;
+            --text-main: #333333;
+            --text-light: #F5F5F5;
+            --card-bg: #FFFFFF;
+            --border-color: #EAE8E3;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            cursor: none;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- КАСТОМНЫЙ КУРСОР --- */
+        .cursor-dot {
+            width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+        }
+        .cursor-ring {
+            width: 40px; height: 40px; border: 1px solid rgba(197, 160, 89, 0.5); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+        }
+        .cursor-ring.hover {
+            width: 70px; height: 70px; border-color: var(--primary);
+            background-color: rgba(197, 160, 89, 0.1);
+        }
+
+        /* --- ШАПКА ГАЛЕРЕИ --- */
+        .gallery-hero {
+            background: var(--bg-body);
+            color: var(--text-main);
+            padding: 60px 20px 40px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 2;
+        }
+
+        .gallery-hero h1 {
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .gallery-hero h2 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            color: var(--bg-dark);
+            margin-bottom: 15px;
+        }
+
+        .gallery-subtitle {
+            font-size: 1rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 15px;
+            color: var(--bg-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px dotted var(--primary);
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* --- СЕТКА МИНИАТЮР --- */
+        .gallery-grid {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 50px 20px 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #eee;
+            aspect-ratio: 4 / 3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            /* Начальное состояние для анимации */
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(5px);
+        }
+
+        .gallery-item.revealed {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+            transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease;
+        }
+
+        /* Золотая рамка */
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(197,160,89,0) 0%, rgba(197,160,89,0.8) 50%, rgba(197,160,89,0) 100%) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .gallery-item:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            will-change: transform;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* --- КИНЕМАТОГРАФИЧНЫЙ ЛАЙТБОКС --- */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: #000; /* Абсолютно черный фон */
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            /* Убрали blur, чтобы не было "мутности" */
+        }
+
+        .lightbox.active {
+            display: flex;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 88vh;
+            object-fit: contain;
+            border-radius: 2px; /* Минимальное скругление для кинематографичности */
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            /* Анимация въезда */
+            animation: cinematicIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes cinematicIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .lb-btn {
+            position: absolute;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.6rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .lb-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .lb-close {
+            top: 20px;
+            right: 20px;
+            transform: none;
+        }
+        .lb-close:hover {
+            transform: scale(1.1);
+        }
+
+        .lb-prev { left: 30px; top: 50%; transform: translateY(-50%); }
+        .lb-next { right: 30px; top: 50%; transform: translateY(-50%); }
+
+        .lb-prev:hover, .lb-next:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .lb-counter {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #d1d1d1;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- АДАПТИВНОСТЬ --- */
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor-dot, .cursor-ring { display: none; }
+
+            .gallery-hero h1 { font-size: 0.8rem; letter-spacing: 2px; }
+            .gallery-hero h2 { font-size: 2.2rem; letter-spacing: 1px; }
+            .gallery-subtitle { font-size: 0.85rem; letter-spacing: 2px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 30px 12px 60px; }
+            .lb-btn { width: 42px; height: 42px; font-size: 1.2rem; }
+            .lb-prev { left: 8px; }
+            .lb-next { right: 8px; }
+            .lb-close { top: 8px; right: 8px; }
+            .lb-counter { bottom: 20px; font-size: 0.8rem; padding: 5px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Кастомный курсор -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- ШАПКА -->
+    <div class="gallery-hero">
+        <h1>Культурный духовно-просветительский центр «Ковчег»</h1>
+        <h2>Большой концертный зал</h2>
+        <p class="gallery-subtitle">Техническая фотогалерея</p>
+        <a href="index_bkz.html" class="back-link">← Вернуться к техническому паспорту зала</a>
+        <br>
+        <a href="index.html" class="back-link" style="margin-top: 10px;">← На главную (выбор зала)</a>
+    </div>
+
+    <!-- СЕТКА ФОТО -->
+    <div class="gallery-grid" id="galleryGrid"></div>
+
+    <!-- ЛАЙТБОКС -->
+    <div class="lightbox" id="lightbox">
+        <button class="lb-btn lb-close" id="lbClose" aria-label="Закрыть">×</button>
+        <button class="lb-btn lb-prev" id="lbPrev" aria-label="Предыдущее">‹</button>
+        <img id="lbImage" src="" alt="">
+        <button class="lb-btn lb-next" id="lbNext" aria-label="Следующее">›</button>
+        <div class="lb-counter" id="lbCounter"></div>
+    </div>
+
+    <script>
+        // Список файлов (порядок = порядок отображения)
+        const photos = [
+            "hall_pano_9774.jpg",
+            "hall_108_007.jpg",
+            "hall_110_009.jpg",
+            "hall_113_012.jpg",
+            "hall_078_032.jpg",
+            "hall_089_043.jpg",
+            "hall_088_042.jpg",
+            "hall_064_018.jpg",
+            "hall_283_114.jpg",
+            "hall_047_001.jpg",
+            "hall_079_033.jpg",
+            "hall_083_037.jpg",
+            "hall_085_039.jpg",
+            "hall_050_004.jpg",
+            "hall_063_017.jpg",
+            "hall_080_034.jpg",
+            "hall_081_035.jpg",
+            "hall_124_023.jpg",
+            "hall_165_065.jpg",
+            "hall_210_040.jpg",
+            "hall_211_041.jpg",
+            "hall_212_042.jpg",
+            "hall_216_046.jpg",
+            "hall_276_106.jpg",
+            "hall_279_109.jpg",
+            "hall_233_063.jpg",
+            "hall_175_005.jpg",
+            "hall_192_022.jpg",
+            "hall_193_023.jpg",
+            "hall_195_025.jpg",
+            "hall_201_031.jpg",
+            "hall_208_038.jpg",
+            "hall_218_048.jpg",
+            "hall_243_073.jpg",
+            "hall_255_085.jpg",
+            "hall_138_000.jpg",
+            "hall_142_140.jpg",
+            "hall_205_035.jpg",
+            "hall_213_043.jpg",
+            "hall_200_030.jpg",
+            "hall_186_016.jpg",
+            "hall_188_018.jpg",
+            "hall_046_003.jpg",
+            "hall_284_9261.jpg"
+        ];
+
+        const basePath = "photos_bkz_web/";
+        const grid = document.getElementById("galleryGrid");
+        const lightbox = document.getElementById("lightbox");
+        const lbImage = document.getElementById("lbImage");
+        const lbCounter = document.getElementById("lbCounter");
+        let currentIndex = 0;
+
+        // 1. Кастомный курсор
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorRing = document.getElementById('cursorRing');
+        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+        });
+
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.left = ringX + 'px';
+            cursorRing.style.top = ringY + 'px';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        // 2. Построение сетки с параллаксом
+        photos.forEach((file, i) => {
+            const item = document.createElement("div");
+            item.className = "gallery-item";
+            
+            const img = document.createElement("img");
+            img.src = basePath + file;
+            img.alt = "Фото зала " + (i + 1);
+            img.loading = "lazy";
+            item.appendChild(img);
+            
+            item.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+            item.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+            item.addEventListener("click", () => openLightbox(i));
+            
+            // Параллакс внутри карточки
+            item.addEventListener('mousemove', (e) => {
+                const rect = item.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const moveX = (x - centerX) / centerX * 10;
+                const moveY = (y - centerY) / centerY * 10;
+                img.style.transform = `scale(1.1) translate(${moveX}px, ${moveY}px)`;
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                img.style.transform = 'scale(1) translate(0, 0)';
+            });
+            
+            grid.appendChild(item);
+        });
+
+        // 3. Анимация появления при скролле
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('revealed');
+                    }, index * 50);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            observer.observe(item);
+        });
+
+        // 4. Лайтбокс
+        function openLightbox(index) {
+            currentIndex = index;
+            updateLightbox();
+            lightbox.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        function updateLightbox() {
+            lbImage.src = basePath + photos[currentIndex];
+            lbCounter.textContent = (currentIndex + 1) + " / " + photos.length;
+        }
+
+        function nextPhoto() {
+            currentIndex = (currentIndex + 1) % photos.length;
+            updateLightbox();
+        }
+
+        function prevPhoto() {
+            currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+            updateLightbox();
+        }
+
+        document.getElementById("lbClose").addEventListener("click", closeLightbox);
+        document.getElementById("lbNext").addEventListener("click", nextPhoto);
+        document.getElementById("lbPrev").addEventListener("click", prevPhoto);
+
+        lightbox.addEventListener("click", (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (!lightbox.classList.contains("active")) return;
+            if (e.key === "Escape") closeLightbox();
+            if (e.key === "ArrowRight") nextPhoto();
+            if (e.key === "ArrowLeft") prevPhoto();
+        });
+    </script>
+</body>
+</html>

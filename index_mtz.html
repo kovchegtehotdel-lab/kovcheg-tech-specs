@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Малый зал | Технический паспорт</title>
+    <style>
+        :root {
+            --primary: #C5A059;
+            --primary-hover: #B08D4A;
+            --bg-body: #FAF9F6;
+            --bg-dark: #2A2A2A;
+            --text-main: #333333;
+            --text-light: #F5F5F5;
+            --card-bg: #FFFFFF;
+            --border-color: #EAE8E3;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            cursor: none; /* Скрываем стандартный курсор */
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- КАСТОМНЫЙ КУРСОР --- */
+        .cursor-dot {
+            width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+        }
+        .cursor-ring {
+            width: 40px; height: 40px; border: 1px solid rgba(197, 160, 89, 0.5); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+        }
+        .cursor-ring.hover {
+            width: 70px; height: 70px; border-color: var(--primary);
+            background-color: rgba(197, 160, 89, 0.1);
+        }
+
+        /* --- ФОНОВЫЕ ПЫЛИНКИ --- */
+        .page-particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .page-particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.15;
+            box-shadow: 0 0 10px 2px rgba(197, 160, 89, 0.3);
+            animation: floatPageParticle linear infinite;
+        }
+        @keyframes floatPageParticle {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-80px) translateX(30px); }
+            100% { transform: translateY(-150px) translateX(0); opacity: 0; }
+        }
+
+        /* --- ШАПКА (HERO) --- */
+        .hero {
+            position: relative;
+            background-color: #1a1a1a;
+            color: var(--text-light);
+            padding: 100px 20px 120px;
+            text-align: center;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        /* Живое фото с дыханием и эффектом "Театральный свет" */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('front_mtz.jpg') center center/cover no-repeat;
+            opacity: 0.85;
+            z-index: 0;
+            animation: heroBreathe 25s ease-in-out infinite alternate;
+        }
+
+        /* "Театральный свет" - мягкий золотистый пульсирующий градиент сверху */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; right: -50%; bottom: -50%;
+            background: radial-gradient(circle at 50% 0%, rgba(197, 160, 89, 0.15) 0%, rgba(0,0,0,0) 60%);
+            z-index: 1;
+            animation: theatricalLight 8s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        .hero::before {
+            /* Градиент для читаемости текста */
+            background-image: url('front_mtz.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Дополнительный слой для затемнения */
+        .hero-bg-gradient {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            height: 140px;
+            width: auto;
+            mix-blend-mode: screen;
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 75%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 5%, rgba(0,0,0,0) 75%);
+            filter: drop-shadow(0 0 15px rgba(0,0,0, 0.8));
+        }
+
+        .hero h1 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #d1d1d1;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .home-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #d1d1d1;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px dotted #d1d1d1;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .home-link:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* --- БЫСТРЫЕ ЦИФРЫ --- */
+        .quick-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 0 20px;
+            max-width: 1100px;
+            margin: -50px auto 40px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px 10px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            text-align: center;
+            flex: 1;
+            min-width: 170px;
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 1.4rem;
+            color: var(--bg-dark);
+            margin-bottom: 8px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .stat-card span {
+            font-size: 0.75rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            white-space: nowrap;
+        }
+
+        /* --- КОНТЕЙНЕР --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 20px 80px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.6rem;
+            font-weight: 300;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--bg-dark);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+            margin: 15px auto 0;
+        }
+
+        /* --- АККОРДЕОН --- */
+        .accordion-item {
+            background: var(--card-bg);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border-color: rgba(197, 160, 89, 0.3);
+        }
+
+        .accordion-header {
+            padding: 22px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--bg-dark);
+            background: var(--card-bg);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: #FCFCFA;
+        }
+
+        .accordion-item.active .accordion-header {
+            color: var(--primary);
+        }
+
+        .accordion-header .icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            line-height: 1;
+        }
+
+        .accordion-item.active .accordion-header .icon {
+            transform: rotate(45deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #FCFCFA;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 2000px;
+        }
+
+        .content-inner {
+            padding: 0 25px 25px 25px;
+            border-top: 1px solid var(--border-color);
+            background: var(--card-bg);
+        }
+
+        .content-inner p {
+            margin-bottom: 15px;
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .content-inner ul {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .content-inner ul li {
+            padding: 6px 0 6px 24px;
+            position: relative;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .content-inner ul li::before {
+            content: '•';
+            color: var(--primary);
+            font-size: 1.4rem;
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        /* --- КНОПКИ СКАЧИВАНИЯ (МАГНИТНЫЕ) --- */
+        .download-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 22px;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--bg-dark);
+            font-weight: 500;
+            will-change: transform;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--bg-dark);
+            border: 1px solid #ccc;
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            border-color: var(--bg-dark);
+        }
+
+        .btn-icon { margin-right: 10px; font-size: 1.1rem; }
+
+        /* --- ПОДВАЛ --- */
+        footer {
+            text-align: center;
+            padding: 50px 20px;
+            background: #1A1A1A;
+            color: #999;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        footer p { margin-bottom: 10px; }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+            border-bottom: 1px dotted var(--primary);
+        }
+
+        footer a:hover { color: #fff; border-bottom: 1px solid #fff; }
+
+        footer .copyright {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* --- АНИМАЦИИ --- */
+        @keyframes heroBreathe {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
+        @keyframes theatricalLight {
+            0% { opacity: 0.4; transform: scale(0.9); }
+            100% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* --- АДАПТИВНОСТЬ --- */
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor-dot, .cursor-ring, .page-particles { display: none; }
+
+            .hero { padding: 80px 20px 100px; }
+            .hero h2 { font-size: 2.2rem; }
+            .stat-card { min-width: 45%; padding: 15px 10px; }
+            .stat-card h3 { font-size: 1.2rem; }
+            .stat-card span { font-size: 0.65rem; }
+            .accordion-header { font-size: 1rem; padding: 18px 20px; }
+            .logo-container img { height: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Фоновые пылинки -->
+    <div class="page-particles" id="pageParticles"></div>
+
+    <!-- Кастомный курсор -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- ШАПКА -->
+    <div class="hero">
+        <div class="hero-bg-gradient"></div>
+        <div class="hero-content">
+            <div class="logo-container">
+                <img src="logo.png" alt="Логотип Ковчег">
+            </div>
+            <h1>Культурный духовно-просветительский центр</h1>
+            <h2>МАЛЫЙ ТЕАТРАЛЬНЫЙ ЗАЛ</h2>
+            <p>Технический паспорт зала</p>
+            <a href="index.html" class="home-link">← На главную (выбор зала)</a>
+        </div>
+    </div>
+
+    <!-- БЫСТРЫЕ ЦИФРЫ -->
+    <div class="quick-stats">
+        <div class="stat-card">
+            <h3>100 мест</h3>
+            <span>Зрительский подиум</span>
+        </div>
+        <div class="stat-card">
+            <h3>Behringer X32</h3>
+            <span>Цифровой микшер</span>
+        </div>
+        <div class="stat-card">
+            <h3>MA2 on PC</h3>
+            <span>Световой пульт</span>
+        </div>
+        <div class="stat-card">
+            <h3>8200 ANSI</h3>
+            <span>Лазерный проектор</span>
+        </div>
+        <div class="stat-card">
+            <h3>4,57 х 3,43 м</h3>
+            <span>Проекционный экран</span>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="container">
+        <h2 class="section-title">Технические разделы</h2>
+
+        <!-- 1. Звук -->
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>1. Звуковое оборудование</span>
+                <span class="icon">+</span>
+            </div>
+            <div class="accordion-content">
+                <div class="content-inner">
+                    <p>Управление расположено на технической галерее. Микшерный пульт: Behringer X32 Compact. Радиосистемы. Акустика стерео: dB Technologies LVX P10 (до 8 шт), активный сабвуфер Yamaha DXS 18, оборудование по запросу.</p>
+                    <div class="download-group">
+                        <a href="files_mtz/02-1-Kovcheg_SmallHall_Audio_Specs_RU.pdf" class="btn magnetic" download>
+                            <span class="btn-icon">⬇</span> Скачать спецификацию (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Свет -->
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>2. Световое оборудование</span>
+                <span class="icon">+</span>
+            </div>
+            <div class="accordion-content">
+                <div class="content-inner">
+                    <p>Управление на технической галерее MA Lighting grandMA2 (command wing + стационарный ПК с ПО grandMA2 onPC). Приборы: LED Profile Spot Eurolite (6), Wash JB Systems (8), Spot Showtec Phantom (4), Mini B LightCraft (4), Slim PAR (2), HAZE Antari HZ-500 (1).</p>
+                    <div class="download-group">
+                        <a href="files_mtz/02-2-Kovcheg_SmallHall_Light_Specs_RU.pdf" class="btn magnetic" download>
+                            <span class="btn-icon">⬇</span> Спецификация по свету (PDF)
+                        </a>
+                        <a href="files_mtz/02-2-A-Kovcheg_SmallHall_Light_Plot_RU.pdf" class="btn btn-outline magnetic" download>
+                            <span class="btn-icon">⬇</span> Light Plot (PDF)
+                        </a>
+                        <a href="files_mtz/02-2-B-Kovcheg_SmallHall_DMX_Addresses_RU.pdf" class="btn btn-outline magnetic" download>
+                            <span class="btn-icon">⬇</span> DMX-адреса приборов (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Видео -->
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>3. Видеопроекционное оборудование</span>
+                <span class="icon">+</span>
+            </div>
+            <div class="accordion-content">
+                <div class="content-inner">
+                    <p>Управление на технической галерее. Проектор Optoma ZU820TST (лазерный, 8200 ANSI). Моторизованный экран Lumien Master Control (343 × 457 см). Управление: Apple Mac mini Pro M2, ПО Resolume Arena.</p>
+                    <div class="download-group">
+                        <a href="files_mtz/02-3-Kovcheg_SmallHall_Video_Specs_RU.pdf" class="btn magnetic" download>
+                            <span class="btn-icon">⬇</span> Скачать спецификацию (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Фотогалерея -->
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <span>4. Техническая фотогалерея зала</span>
+                <span class="icon">+</span>
+            </div>
+            <div class="accordion-content">
+                <div class="content-inner">
+                    <p>Смотрите технические возможности Малого театрального зала.</p>
+                    <div class="download-group">
+                        <a href="gallery_mtz.html" class="btn magnetic">
+                            <span class="btn-icon">▣</span> Открыть галерею
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <footer>
+        <p>По вопросам технического согласования обращайтесь к техническому директору</p>
+        <p><a href="mailto:kovcheg.teh.otdel@gmail.com">kovcheg.teh.otdel@gmail.com</a></p>
+        
+        <div class="copyright">
+            © 2026 Константин Леонидович Карманов<br>
+            Все права защищены.
+        </div>
+    </footer>
+
+    <!-- СКРИПТЫ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Кастомный курсор
+            const cursorDot = document.getElementById('cursorDot');
+            const cursorRing = document.getElementById('cursorRing');
+            const links = document.querySelectorAll('a, .accordion-header');
+            let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+            });
+
+            function animateRing() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top = ringY + 'px';
+                requestAnimationFrame(animateRing);
+            }
+            animateRing();
+
+            links.forEach(link => {
+                link.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+                link.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+            });
+
+            // 2. Аккордеон
+            const headers = document.querySelectorAll('.accordion-header');
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const item = this.parentElement;
+                    item.classList.toggle('active');
+                });
+            });
+
+            // 3. Фоновые пылинки
+            const pageParticlesContainer = document.getElementById('pageParticles');
+            const pageParticleCount = 30;
+            for (let i = 0; i < pageParticleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('page-particle');
+                const size = Math.random() * 5 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                const duration = Math.random() * 25 + 15;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                pageParticlesContainer.appendChild(particle);
+            }
+
+            // 4. Плавное появление с легким размытием
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        entry.target.style.filter = 'blur(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const elementsToAnimate = document.querySelectorAll('.stat-card, .accordion-item');
+            elementsToAnimate.forEach((el) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.filter = 'blur(4px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease';
+                observer.observe(el);
+            });
+
+            // 5. Магнитные кнопки
+            const magneticBtns = document.querySelectorAll('.magnetic');
+            magneticBtns.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translate(0, 0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
