@@ -2,10 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Большой зал | Технический паспорт</title>
     <style>
-        /* --- БАЗОВЫЕ СТИЛИ --- */
         :root {
             --primary: #C5A059;
             --primary-hover: #B08D4A;
@@ -18,7 +17,7 @@
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         html { scroll-behavior: smooth; }
 
@@ -35,7 +34,8 @@
             overflow-x: hidden;
         }
 
-        /* --- КАСТОМНЫЙ КУРСОР --- */
+        /* --- КАСТОМНЫЙ КУРСОР (только для десктопа) --- */
+        .cursor-dot, .cursor-ring { display: none; }
         .cursor-dot {
             width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
@@ -50,7 +50,7 @@
             background-color: rgba(197, 160, 89, 0.1);
         }
 
-        /* --- ФОНОВЫЕ ПЫЛИНКИ (ЗОЛОТАЯ ПЫЛЬ) --- */
+        /* --- ФОНОВЫЕ ПЫЛИНКИ --- */
         .page-particles {
             position: fixed;
             inset: 0;
@@ -63,7 +63,6 @@
             background: var(--primary);
             border-radius: 50%;
             opacity: 0.15;
-            /* Свечение для пылинок */
             box-shadow: 0 0 10px 2px rgba(197, 160, 89, 0.3);
             animation: floatPageParticle linear infinite;
         }
@@ -86,8 +85,7 @@
             align-items: center;
             justify-content: center;
             z-index: 2;
-            /* Параллакс эффект: фиксируем высоту для корректного скролла */
-            clip-path: inset(0 0 0 0); 
+            clip-path: inset(0 0 0 0);
         }
 
         .hero::before {
@@ -98,7 +96,6 @@
             opacity: 0.85;
             z-index: 0;
             animation: heroBreathe 25s ease-in-out infinite alternate;
-            /* Параллакс */
             will-change: transform;
         }
 
@@ -165,6 +162,7 @@
             font-size: 0.9rem;
             border-bottom: 1px dotted #d1d1d1;
             transition: color 0.2s, border-color 0.2s;
+            padding: 8px 0;
         }
 
         .home-link:hover {
@@ -276,6 +274,7 @@
             color: var(--bg-dark);
             background: var(--card-bg);
             transition: background 0.3s, color 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .accordion-header:hover {
@@ -342,7 +341,7 @@
             top: 2px;
         }
 
-        /* --- КНОПКИ СКАЧИВАНИЯ (МАГНИТНЫЕ) --- */
+        /* --- КНОПКИ СКАЧИВАНИЯ --- */
         .download-group {
             display: flex;
             gap: 12px;
@@ -362,7 +361,8 @@
             transition: all 0.3s ease;
             border: 1px solid var(--bg-dark);
             font-weight: 500;
-            will-change: transform; /* Для плавности магнитного эффекта */
+            will-change: transform;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn:hover {
@@ -385,9 +385,28 @@
             border-color: var(--bg-dark);
         }
 
-        .btn-icon {
-            margin-right: 10px;
-            font-size: 1.1rem;
+        .btn-icon { margin-right: 10px; font-size: 1.1rem; }
+
+        /* --- НИЖНЯЯ НАВИГАЦИЯ --- */
+        .bottom-nav {
+            text-align: center;
+            padding: 40px 20px 60px;
+            border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
+            background: var(--bg-body);
+        }
+
+        .bottom-nav .home-link {
+            color: var(--bg-dark);
+            border-bottom: 1px dotted var(--primary);
+            font-size: 1rem;
+            padding: 10px 0;
+            display: inline-block;
+        }
+
+        .bottom-nav .home-link:hover {
+            color: var(--primary);
         }
 
         /* --- ПОДВАЛ --- */
@@ -401,9 +420,7 @@
             z-index: 3;
         }
 
-        footer p {
-            margin-bottom: 10px;
-        }
+        footer p { margin-bottom: 10px; }
 
         footer a {
             color: var(--primary);
@@ -412,10 +429,7 @@
             border-bottom: 1px dotted var(--primary);
         }
 
-        footer a:hover {
-            color: #fff;
-            border-bottom: 1px solid #fff;
-        }
+        footer a:hover { color: #fff; border-bottom: 1px solid #fff; }
 
         footer .copyright {
             margin-top: 30px;
@@ -430,18 +444,66 @@
             100% { transform: scale(1.08); }
         }
 
-        /* --- АДАПТИВНОСТЬ --- */
+        /* --- АДАПТИВНОСТЬ ДЛЯ ПЛАНШЕТОВ (max-width: 1024px) --- */
+        @media (max-width: 1024px) {
+            .hero h2 { font-size: 3rem; }
+            .hero { padding: 80px 20px 100px; }
+            .quick-stats { margin-top: -40px; }
+            .stat-card { min-width: 160px; }
+        }
+
+        /* --- АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ (max-width: 768px) --- */
         @media (max-width: 768px) {
             body { cursor: auto; }
             .cursor-dot, .cursor-ring, .page-particles { display: none; }
 
-            .hero { padding: 80px 20px 100px; }
-            .hero h2 { font-size: 2.2rem; }
-            .stat-card { min-width: 45%; padding: 15px 10px; }
+            .hero { padding: 60px 15px 80px; }
+            .hero h1 { font-size: 0.85rem; letter-spacing: 2px; }
+            .hero h2 { font-size: 2.2rem; letter-spacing: 1px; }
+            .hero p { font-size: 1.1rem; }
+            .logo-container img { height: 90px; }
+            
+            /* Плашки: строго 2 колонки */
+            .quick-stats {
+                margin-top: -40px;
+                gap: 10px;
+                padding: 0 15px;
+            }
+            .stat-card {
+                min-width: 45%;
+                padding: 15px 10px;
+                flex: 1 1 45%;
+            }
             .stat-card h3 { font-size: 1.2rem; }
             .stat-card span { font-size: 0.65rem; }
-            .accordion-header { font-size: 1rem; padding: 18px 20px; }
-            .logo-container img { height: 80px; }
+
+            /* Контейнер и Аккордеон */
+            .container { padding: 10px 15px 60px; }
+            .section-title { font-size: 1.3rem; margin-bottom: 30px; }
+            
+            .accordion-header {
+                font-size: 1rem;
+                padding: 18px 20px;
+            }
+            .accordion-header .icon { font-size: 1.3rem; }
+            
+            .content-inner { padding: 0 20px 20px 20px; }
+            .content-inner p { font-size: 0.95rem; }
+
+            /* Кнопки скачивания: на всю ширину */
+            .download-group { flex-direction: column; gap: 10px; }
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* --- САМЫЕ УЗКИЕ ЭКРАНЫ (max-width: 380px) --- */
+        @media (max-width: 380px) {
+            .hero h2 { font-size: 1.9rem; }
+            .stat-card { min-width: 100%; flex: 1 1 100%; }
         }
     </style>
 </head>
@@ -641,6 +703,11 @@
 
     </div>
 
+    <!-- НИЖНЯЯ ССЫЛКА НА ГЛАВНУЮ -->
+    <div class="bottom-nav">
+        <a href="index.html" class="home-link">← На главную (выбор зала)</a>
+    </div>
+
     <!-- ПОДВАЛ -->
     <footer>
         <p>По вопросам технического согласования обращайтесь к техническому директору</p>
@@ -655,33 +722,54 @@
     <!-- СКРИПТЫ -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Кастомный курсор
-            const cursorDot = document.getElementById('cursorDot');
-            const cursorRing = document.getElementById('cursorRing');
-            const links = document.querySelectorAll('a, .accordion-header');
-            let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX; mouseY = e.clientY;
-                cursorDot.style.left = mouseX + 'px';
-                cursorDot.style.top = mouseY + 'px';
-            });
+            // 1. Кастомный курсор (только для ПК)
+            if (!isTouchDevice) {
+                const cursorDot = document.getElementById('cursorDot');
+                const cursorRing = document.getElementById('cursorRing');
+                cursorDot.style.display = 'block';
+                cursorRing.style.display = 'block';
 
-            function animateRing() {
-                ringX += (mouseX - ringX) * 0.15;
-                ringY += (mouseY - ringY) * 0.15;
-                cursorRing.style.left = ringX + 'px';
-                cursorRing.style.top = ringY + 'px';
-                requestAnimationFrame(animateRing);
+                const links = document.querySelectorAll('a, .accordion-header');
+                let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    cursorDot.style.left = mouseX + 'px';
+                    cursorDot.style.top = mouseY + 'px';
+                });
+
+                function animateRing() {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    cursorRing.style.left = ringX + 'px';
+                    cursorRing.style.top = ringY + 'px';
+                    requestAnimationFrame(animateRing);
+                }
+                animateRing();
+
+                links.forEach(link => {
+                    link.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+                    link.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+                });
+
+                // Магнитные кнопки (только для ПК)
+                const magneticBtns = document.querySelectorAll('.magnetic');
+                magneticBtns.forEach(btn => {
+                    btn.addEventListener('mousemove', (e) => {
+                        const rect = btn.getBoundingClientRect();
+                        const x = e.clientX - rect.left - rect.width / 2;
+                        const y = e.clientY - rect.top - rect.height / 2;
+                        btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                    });
+                    btn.addEventListener('mouseleave', () => {
+                        btn.style.transform = 'translate(0, 0)';
+                    });
+                });
             }
-            animateRing();
 
-            links.forEach(link => {
-                link.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
-                link.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
-            });
-
-            // 2. Аккордеон
+            // 2. Аккордеон (работает на всех устройствах)
             const headers = document.querySelectorAll('.accordion-header');
             headers.forEach(header => {
                 header.addEventListener('click', function() {
@@ -690,40 +778,26 @@
                 });
             });
 
-            // 3. Фоновые пылинки (с мерцанием)
-            const pageParticlesContainer = document.getElementById('pageParticles');
-            const pageParticleCount = 40; // Увеличили количество
-            for (let i = 0; i < pageParticleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('page-particle');
-                const size = Math.random() * 5 + 1;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                const duration = Math.random() * 25 + 15;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${Math.random() * 10}s`;
-                pageParticlesContainer.appendChild(particle);
+            // 3. Фоновые пылинки (только для ПК)
+            if (!isTouchDevice) {
+                const pageParticlesContainer = document.getElementById('pageParticles');
+                const pageParticleCount = 40;
+                for (let i = 0; i < pageParticleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('page-particle');
+                    const size = Math.random() * 5 + 1;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    const duration = Math.random() * 25 + 15;
+                    particle.style.animationDuration = `${duration}s`;
+                    particle.style.animationDelay = `${Math.random() * 10}s`;
+                    pageParticlesContainer.appendChild(particle);
+                }
             }
 
-            // 4. Параллакс для фото в шапке при скролле
-            const hero = document.getElementById('heroSection');
-            const heroBg = document.querySelector('.hero::before'); // Не сработает напрямую, применим через JS
-            // Используем более надежный способ: добавим стиль на скролл
-            window.addEventListener('scroll', () => {
-                const scrollPos = window.scrollY;
-                if (scrollPos < 800) { // Ограничиваем, чтобы не дергалось
-                    // Находим элемент через вычисленный стиль
-                    const heroBgElement = document.querySelector('.hero');
-                    if (heroBgElement) {
-                        // Применяем transform к ::before через CSS переменную
-                        document.documentElement.style.setProperty('--hero-parallax', `${scrollPos * 0.3}px`);
-                    }
-                }
-            });
-
-            // 5. Плавное появление с легким размытием
+            // 4. Плавное появление с легким размытием (работает на всех)
             const observerOptions = { threshold: 0.1 };
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -743,21 +817,6 @@
                 el.style.filter = 'blur(4px)';
                 el.style.transition = 'opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease';
                 observer.observe(el);
-            });
-
-            // 6. Магнитные кнопки
-            const magneticBtns = document.querySelectorAll('.magnetic');
-            magneticBtns.forEach(btn => {
-                btn.addEventListener('mousemove', (e) => {
-                    const rect = btn.getBoundingClientRect();
-                    const x = e.clientX - rect.left - rect.width / 2;
-                    const y = e.clientY - rect.top - rect.height / 2;
-                    // Сдвигаем кнопку на 30% от расстояния до курсора
-                    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-                });
-                btn.addEventListener('mouseleave', () => {
-                    btn.style.transform = 'translate(0, 0)';
-                });
             });
         });
     </script>
