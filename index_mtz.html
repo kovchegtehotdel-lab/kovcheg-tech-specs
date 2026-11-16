@@ -169,7 +169,7 @@
             font-size: 0.9rem;
             border-bottom: 1px dotted #d1d1d1;
             transition: color 0.2s, border-color 0.2s;
-            padding: 8px 0; /* Увеличили зону нажатия */
+            padding: 8px 0;
         }
 
         .home-link:hover {
@@ -281,7 +281,7 @@
             color: var(--bg-dark);
             background: var(--card-bg);
             transition: background 0.3s, color 0.3s;
-            -webkit-tap-highlight-color: transparent; /* Убираем синюю рамку при тапе на iOS */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .accordion-header:hover {
@@ -394,6 +394,28 @@
 
         .btn-icon { margin-right: 10px; font-size: 1.1rem; }
 
+        /* --- НИЖНЯЯ НАВИГАЦИЯ --- */
+        .bottom-nav {
+            text-align: center;
+            padding: 40px 20px 60px;
+            border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
+            background: var(--bg-body);
+        }
+
+        .bottom-nav .home-link {
+            color: var(--bg-dark);
+            border-bottom: 1px dotted var(--primary);
+            font-size: 1rem;
+            padding: 10px 0;
+            display: inline-block;
+        }
+
+        .bottom-nav .home-link:hover {
+            color: var(--primary);
+        }
+
         /* --- ПОДВАЛ --- */
         footer {
             text-align: center;
@@ -460,7 +482,7 @@
                 padding: 0 15px;
             }
             .stat-card {
-                min-width: 45%; /* 2 в ряд */
+                min-width: 45%;
                 padding: 15px 10px;
                 flex: 1 1 45%;
             }
@@ -473,7 +495,7 @@
             
             .accordion-header {
                 font-size: 1rem;
-                padding: 18px 20px; /* Удобная высота для пальца */
+                padding: 18px 20px;
             }
             .accordion-header .icon { font-size: 1.3rem; }
             
@@ -485,7 +507,7 @@
             .btn {
                 width: 100%;
                 justify-content: center;
-                padding: 14px 20px; /* Увеличили высоту для удобства */
+                padding: 14px 20px;
                 font-size: 0.95rem;
             }
         }
@@ -493,7 +515,7 @@
         /* --- САМЫЕ УЗКИЕ ЭКРАНЫ (max-width: 380px) --- */
         @media (max-width: 380px) {
             .hero h2 { font-size: 1.9rem; }
-            .stat-card { min-width: 100%; flex: 1 1 100%; } /* 1 колонка для очень узких */
+            .stat-card { min-width: 100%; flex: 1 1 100%; }
         }
     </style>
 </head>
@@ -582,7 +604,7 @@
                         <a href="files_mtz/02-2-A-Kovcheg_SmallHall_Light_Plot_RU.pdf" class="btn btn-outline magnetic" download>
                             <span class="btn-icon">⬇</span> Light Plot (PDF)
                         </a>
-                        <a href="files_mtz/02-2-B-Kovcheg_SmallHall_DMХ_Addresses_RU.pdf" class="btn btn-outline magnetic" download>
+                        <a href="files_mtz/02-2-B-Kovcheg_SmallHall_DMX_Addresses_RU.pdf" class="btn btn-outline magnetic" download>
                             <span class="btn-icon">⬇</span> DMX-адреса приборов (PDF)
                         </a>
                     </div>
@@ -632,7 +654,7 @@
     <div class="bottom-nav">
         <a href="index.html" class="home-link">← На главную (выбор зала)</a>
     </div>
-    
+
     <!-- ПОДВАЛ -->
     <footer>
         <p>По вопросам технического согласования обращайтесь к техническому директору</p>
@@ -647,7 +669,6 @@
     <!-- СКРИПТЫ -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Проверка на тач-устройство
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
             // 1. Кастомный курсор (только для ПК)
@@ -680,7 +701,7 @@
                     link.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
                 });
 
-                // 5. Магнитные кнопки (только для ПК)
+                // Магнитные кнопки (только для ПК)
                 const magneticBtns = document.querySelectorAll('.magnetic');
                 magneticBtns.forEach(btn => {
                     btn.addEventListener('mousemove', (e) => {
@@ -695,7 +716,7 @@
                 });
             }
 
-            // 2. Аккордеон (работает на всех устройствах)
+            // 2. Аккордеон
             const headers = document.querySelectorAll('.accordion-header');
             headers.forEach(header => {
                 header.addEventListener('click', function() {
@@ -704,7 +725,7 @@
                 });
             });
 
-            // 3. Фоновые пылинки (только если не тач)
+            // 3. Фоновые пылинки (только для ПК)
             if (!isTouchDevice) {
                 const pageParticlesContainer = document.getElementById('pageParticles');
                 const pageParticleCount = 30;
@@ -723,7 +744,7 @@
                 }
             }
 
-            // 4. Плавное появление с легким размытием (работает на всех)
+            // 4. Плавное появление с легким размытием
             const observerOptions = { threshold: 0.1 };
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
