@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Технические паспорта залов | Ковчег</title>
     <style>
         :root {
@@ -17,7 +17,7 @@
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         html { scroll-behavior: smooth; }
 
@@ -31,11 +31,10 @@
             flex-direction: column;
             overflow-x: hidden;
             cursor: none; 
-            background-color: var(--bg-body); 
             position: relative;
         }
 
-        /* --- ЖИВОЙ ФОН СТРАНИЦЫ (Еле заметные пылинки) --- */
+        /* --- ЖИВОЙ ФОН СТРАНИЦЫ --- */
         .page-particles {
             position: fixed;
             inset: 0;
@@ -69,10 +68,7 @@
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
         
-        .preloader.loaded {
-            opacity: 0;
-            visibility: hidden;
-        }
+        .preloader.loaded { opacity: 0; visibility: hidden; }
 
         .preloader-logo {
             height: 180px; 
@@ -103,6 +99,7 @@
         @keyframes pulseLogo { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.05); opacity: 1; } }
 
         /* --- КАСТОМНЫЙ КУРСОР --- */
+        .cursor-dot, .cursor-ring { display: none; }
         .cursor-dot {
             width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
@@ -124,7 +121,7 @@
             overflow: hidden;
             perspective: 1000px;
             background-color: var(--bg-body);
-            z-index: 2; /* Поверх фоновых пылинок */
+            z-index: 2;
         }
 
         .hero-bg {
@@ -224,10 +221,9 @@
         .halls-container {
             flex: 1; max-width: 1200px; margin: 0 auto; padding: 120px 20px;
             display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 50px; width: 100%; position: relative; z-index: 3; background-color: transparent; /* Прозрачный фон, чтобы видеть пылинки */
+            gap: 50px; width: 100%; position: relative; z-index: 3; background-color: transparent;
         }
 
-        /* --- КАРТОЧКИ ЗАЛОВ С КИНЕМАТОГРАФИЧНЫМ ЗУМОМ --- */
         .hall-card {
             background: var(--card-bg); border-radius: 20px; overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.06); border: 1px solid rgba(197, 160, 89, 0.15);
@@ -237,72 +233,43 @@
             transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
         }
 
-        .hall-card.visible {
-            opacity: 1; transform: translateY(0);
-        }
+        .hall-card.visible { opacity: 1; transform: translateY(0); }
 
-        /* Эффект парения при наведении */
         .hall-card:hover {
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 40px 80px rgba(0,0,0,0.15);
             border-color: rgba(197, 160, 89, 0.4);
         }
 
-        /* Золотая рамка */
         .hall-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border: 2px solid transparent;
-            border-radius: 20px;
+            content: ''; position: absolute; inset: 0; border: 2px solid transparent; border-radius: 20px;
             background: linear-gradient(135deg, rgba(197,160,89,0) 0%, rgba(197,160,89,1) 50%, rgba(197,160,89,0) 100%) border-box;
             -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            pointer-events: none;
-            z-index: 2;
+            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0;
+            transition: opacity 0.5s ease; pointer-events: none; z-index: 2;
         }
 
         .hall-card:hover::before { opacity: 1; }
 
-        /* Золотой блик */
         .hall-card::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
             background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            transition: left 0.7s ease;
-            z-index: 2;
-            pointer-events: none;
+            transform: skewX(-25deg); transition: left 0.7s ease; z-index: 2; pointer-events: none;
         }
 
         .hall-card:hover::after { left: 150%; }
 
-        /* Контейнер для фото и контента */
         .card-inner {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 3;
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            position: relative; z-index: 3;
         }
 
-        /* --- КИНЕМАТОГРАФИЧНЫЙ ЗУМ ФОТО --- */
         .hall-card-img { 
-            height: 280px; 
-            background-size: cover; 
-            background-position: center; 
-            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); /* Плавный зум */
+            height: 280px; background-size: cover; background-position: center; 
+            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .hall-card:hover .hall-card-img {
-            transform: scale(1.1); /* Увеличение при наведении */
-        }
+        .hall-card:hover .hall-card-img { transform: scale(1.1); }
         
         .hall-card-content { padding: 40px; flex: 1; display: flex; flex-direction: column; }
         .hall-card-content h3 { font-size: 1.6rem; font-weight: 500; color: var(--bg-dark); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
@@ -317,8 +284,8 @@
             display: inline-flex; align-items: center; color: var(--bg-dark);
             font-weight: 600; font-size: 0.95rem; text-transform: uppercase;
             letter-spacing: 1px; text-decoration: none; 
-            transition: transform 0.2s ease, color 0.3s;
-            will-change: transform;
+            transition: transform 0.2s ease, color 0.3s; will-change: transform;
+            -webkit-tap-highlight-color: transparent;
         }
         .card-btn:hover { color: var(--primary); }
         .card-btn span { margin-left: 8px; transition: transform 0.3s ease; }
@@ -345,38 +312,90 @@
         @keyframes logoPulse { 0%, 100% { filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255,255,255,0.6)) drop-shadow(0 0 10px rgba(197,160,89,0.4)); } 50% { filter: brightness(0) invert(1) drop-shadow(0 0 25px rgba(255,255,255,0.9)) drop-shadow(0 0 20px rgba(197,160,89,0.8)); } }
         @keyframes floatParticle { 0% { transform: translateY(0) scale(1); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { transform: translateY(-100vh) scale(1.5); opacity: 0; } }
 
-        /* --- АДАПТИВНОСТЬ --- */
+        /* --- АДАПТИВНОСТЬ ДЛЯ ПЛАНШЕТОВ --- */
         @media (max-width: 1024px) {
             .hero-content h2 { font-size: 4.5rem; letter-spacing: 8px; margin-right: -8px; }
             .hero-content p { letter-spacing: 5px; margin-right: -5px; }
+            .halls-container { padding: 80px 20px; }
         }
 
+        /* --- АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ --- */
         @media (max-width: 768px) {
-            body { cursor: auto; background-color: var(--bg-body); }
+            body { cursor: auto; }
             .cursor-dot, .cursor-ring, .page-particles { display: none; }
             .preloader { display: none; } 
 
-            .hero { display: flex; flex-direction: column; justify-content: space-between; padding: 30px 5%; }
-            .logo-container { position: static; margin-bottom: 20px; opacity: 1; animation: none; }
-            .hero-content { position: static; display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: 50px; margin-bottom: auto; opacity: 1; animation: none; }
-            .hero-content h2 { font-size: 3.5rem; letter-spacing: 5px; margin-right: -5px; }
-            .hero-content h1 { font-size: 0.75rem; letter-spacing: 2px; }
-            .hero-content p { font-size: 0.8rem; letter-spacing: 4px; text-align: center; margin-right: -4px; }
-            .logo-container img { height: 80px; }
-            .scroll-indicator { display: none; }
+            /* Шапка */
+            .hero { 
+                height: auto; 
+                min-height: 70vh; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: flex-start; 
+                padding: 100px 5% 60px; 
+            }
             
-            .halls-container { padding: 60px 15px; gap: 30px; grid-template-columns: 1fr; }
-            .hall-card-img { height: 220px; }
-            .hall-card-content { padding: 25px; }
-            .hall-card { transform: none !important; opacity: 1 !important; }
+            .logo-container { 
+                position: static; 
+                margin: 0 auto 20px; 
+                opacity: 1; 
+                animation: none;
+                text-align: center;
+            }
+            .logo-container img { height: 80px; }
+            
+            .hero-content { 
+                position: static; 
+                display: flex; 
+                flex-direction: column; 
+                align-items: center; 
+                text-align: center; 
+                opacity: 1; 
+                animation: none;
+                margin-bottom: 40px;
+            }
+            .hero-content h1 { font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 10px; }
+            .hero-content h2 { font-size: 3.5rem; letter-spacing: 4px; margin-right: -4px; }
+            .hero-content p { font-size: 0.8rem; letter-spacing: 3px; margin-right: -3px; }
+            
+            .scroll-indicator { display: none; }
+
+            /* Сетка карточек */
+            .halls-container { 
+                padding: 40px 15px 60px; 
+                gap: 25px; 
+                grid-template-columns: 1fr; /* Одна колонка */
+            }
+            
+            .hall-card { 
+                transform: none !important; 
+                opacity: 1 !important; 
+                border-radius: 16px;
+            }
             .hall-card:hover { transform: none; }
             .hall-card:hover .hall-card-img { transform: none; }
+            .hall-card::before, .hall-card::after { display: none; } /* Убираем эффекты для тача */
+
+            .hall-card-img { height: 200px; }
+            .hall-card-content { padding: 25px; }
+            .hall-card-content h3 { font-size: 1.3rem; }
+            .hall-card-content p { font-size: 0.9rem; margin-bottom: 20px; }
+            
+            /* Кнопки в карточке */
+            .hall-card-actions { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .card-btn { font-size: 1rem; }
+        }
+
+        /* --- САМЫЕ УЗКИЕ ЭКРАНЫ --- */
+        @media (max-width: 380px) {
+            .hero-content h2 { font-size: 2.8rem; }
+            .hall-card-img { height: 180px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Фоновые пылинки по всей странице -->
+    <!-- Фоновые пылинки -->
     <div class="page-particles" id="pageParticles"></div>
 
     <!-- ПРЕЛОАДЕР -->
@@ -454,59 +473,71 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Прелоадер
-            const preloader = document.getElementById('preloader');
-            setTimeout(() => {
-                preloader.classList.add('loaded');
-                document.body.style.overflow = 'auto';
-            }, 2000); 
-            document.body.style.overflow = 'hidden';
+            // Проверка на тач-устройство
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-            // 2. Курсор
-            const cursorDot = document.getElementById('cursorDot');
-            const cursorRing = document.getElementById('cursorRing');
-            const links = document.querySelectorAll('a, .hall-card');
-            let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
-
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX; mouseY = e.clientY;
-                cursorDot.style.left = mouseX + 'px';
-                cursorDot.style.top = mouseY + 'px';
-            });
-
-            function animateRing() {
-                ringX += (mouseX - ringX) * 0.15;
-                ringY += (mouseY - ringY) * 0.15;
-                cursorRing.style.left = ringX + 'px';
-                cursorRing.style.top = ringY + 'px';
-                requestAnimationFrame(animateRing);
+            // 1. Прелоадер (только для ПК, на мобильных скрыт через CSS)
+            if (!isTouchDevice) {
+                const preloader = document.getElementById('preloader');
+                setTimeout(() => {
+                    preloader.classList.add('loaded');
+                    document.body.style.overflow = 'auto';
+                }, 2000); 
+                document.body.style.overflow = 'hidden';
             }
-            animateRing();
 
-            links.forEach(link => {
-                link.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
-                link.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
-            });
+            // 2. Кастомный курсор (только для ПК)
+            if (!isTouchDevice) {
+                const cursorDot = document.getElementById('cursorDot');
+                const cursorRing = document.getElementById('cursorRing');
+                cursorDot.style.display = 'block';
+                cursorRing.style.display = 'block';
 
-            // 3. Параллакс
-            const heroBg = document.getElementById('heroBg');
-            const logoContainer = document.getElementById('logoContainer');
-            const heroContent = document.getElementById('heroContent');
-            const hero = document.querySelector('.hero');
+                const links = document.querySelectorAll('a, .hall-card');
+                let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
 
-            hero.addEventListener('mousemove', (e) => {
-                const x = (window.innerWidth - e.pageX * 2) / 100;
-                const y = (window.innerHeight - e.pageY * 2) / 100;
-                heroBg.style.transform = `translateX(${x * 0.5}px) translateY(${y * 0.5}px) scale(1.05)`;
-                logoContainer.style.transform = `translateX(${x * 0.2}px) translateY(${y * 0.2}px)`;
-                heroContent.style.transform = `translateX(${x * 0.1}px) translateY(${y * 0.1}px)`;
-            });
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX; mouseY = e.clientY;
+                    cursorDot.style.left = mouseX + 'px';
+                    cursorDot.style.top = mouseY + 'px';
+                });
 
-            hero.addEventListener('mouseleave', () => {
-                heroBg.style.transform = 'translateX(0) translateY(0) scale(1)';
-                logoContainer.style.transform = 'translateX(0) translateY(0)';
-                heroContent.style.transform = 'translateX(0) translateY(0)';
-            });
+                function animateRing() {
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    cursorRing.style.left = ringX + 'px';
+                    cursorRing.style.top = ringY + 'px';
+                    requestAnimationFrame(animateRing);
+                }
+                animateRing();
+
+                links.forEach(link => {
+                    link.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+                    link.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+                });
+            }
+
+            // 3. Параллакс (только для ПК)
+            if (!isTouchDevice) {
+                const heroBg = document.getElementById('heroBg');
+                const logoContainer = document.getElementById('logoContainer');
+                const heroContent = document.getElementById('heroContent');
+                const hero = document.querySelector('.hero');
+
+                hero.addEventListener('mousemove', (e) => {
+                    const x = (window.innerWidth - e.pageX * 2) / 100;
+                    const y = (window.innerHeight - e.pageY * 2) / 100;
+                    heroBg.style.transform = `translateX(${x * 0.5}px) translateY(${y * 0.5}px) scale(1.05)`;
+                    logoContainer.style.transform = `translateX(${x * 0.2}px) translateY(${y * 0.2}px)`;
+                    heroContent.style.transform = `translateX(${x * 0.1}px) translateY(${y * 0.1}px)`;
+                });
+
+                hero.addEventListener('mouseleave', () => {
+                    heroBg.style.transform = 'translateX(0) translateY(0) scale(1)';
+                    logoContainer.style.transform = 'translateX(0) translateY(0)';
+                    heroContent.style.transform = 'translateX(0) translateY(0)';
+                });
+            }
 
             // 4. Появление карточек при скролле
             const cards = document.querySelectorAll('.hall-card');
@@ -518,57 +549,64 @@
                     }
                 });
             }, { threshold: 0.1 });
+            
             cards.forEach((card, index) => {
-                card.style.transitionDelay = `${index * 0.15}s`;
+                if (!isTouchDevice) {
+                    card.style.transitionDelay = `${index * 0.15}s`;
+                }
                 observer.observe(card);
             });
 
-            // 5. Магнитные кнопки
-            const magneticBtns = document.querySelectorAll('.magnetic');
-            magneticBtns.forEach(btn => {
-                btn.addEventListener('mousemove', (e) => {
-                    const rect = btn.getBoundingClientRect();
-                    const x = e.clientX - rect.left - rect.width / 2;
-                    const y = e.clientY - rect.top - rect.height / 2;
-                    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            // 5. Магнитные кнопки (только для ПК)
+            if (!isTouchDevice) {
+                const magneticBtns = document.querySelectorAll('.magnetic');
+                magneticBtns.forEach(btn => {
+                    btn.addEventListener('mousemove', (e) => {
+                        const rect = btn.getBoundingClientRect();
+                        const x = e.clientX - rect.left - rect.width / 2;
+                        const y = e.clientY - rect.top - rect.height / 2;
+                        btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                    });
+                    btn.addEventListener('mouseleave', () => {
+                        btn.style.transform = 'translate(0, 0)';
+                    });
                 });
-                btn.addEventListener('mouseleave', () => {
-                    btn.style.transform = 'translate(0, 0)';
-                });
-            });
-
-            // 6. Частицы в шапке
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 40;
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                const size = Math.random() * 4 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                const duration = Math.random() * 15 + 10;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${Math.random() * 10}s`;
-                particle.style.bottom = `-10px`;
-                particlesContainer.appendChild(particle);
             }
 
-            // 7. ФОНОВЫЕ ПЫЛИНКИ ПО ВСЕЙ СТРАНИЦЕ
-            const pageParticlesContainer = document.getElementById('pageParticles');
-            const pageParticleCount = 20; // Количество пылинок на всей странице
-            for (let i = 0; i < pageParticleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('page-particle');
-                const size = Math.random() * 6 + 2; // Размер от 2 до 8 пикселей
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                const duration = Math.random() * 20 + 15; // Долгое парение
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${Math.random() * 10}s`;
-                pageParticlesContainer.appendChild(particle);
+            // 6. Частицы в шапке (только для ПК)
+            if (!isTouchDevice) {
+                const particlesContainer = document.getElementById('particles');
+                const particleCount = 40;
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    const size = Math.random() * 4 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    const duration = Math.random() * 15 + 10;
+                    particle.style.animationDuration = `${duration}s`;
+                    particle.style.animationDelay = `${Math.random() * 10}s`;
+                    particle.style.bottom = `-10px`;
+                    particlesContainer.appendChild(particle);
+                }
+
+                // 7. Фоновые пылинки по всей странице (только для ПК)
+                const pageParticlesContainer = document.getElementById('pageParticles');
+                const pageParticleCount = 20;
+                for (let i = 0; i < pageParticleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('page-particle');
+                    const size = Math.random() * 6 + 2;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    const duration = Math.random() * 20 + 15;
+                    particle.style.animationDuration = `${duration}s`;
+                    particle.style.animationDelay = `${Math.random() * 10}s`;
+                    pageParticlesContainer.appendChild(particle);
+                }
             }
         });
     </script>
