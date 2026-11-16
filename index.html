@@ -332,7 +332,7 @@
                 display: flex; 
                 justify-content: space-between; 
                 align-items: flex-start;
-                padding: 40px 5% 20px; 
+                padding: 30px 2% 20px; /* Уменьшили отступ слева, чтобы логотип был левее */
                 position: relative;
             }
             
@@ -343,6 +343,7 @@
                 opacity: 1; 
                 animation: none;
                 flex: 0 0 auto;
+                margin-left: -10px; /* Еще левее */
             }
             .logo-container img { height: 60px; }
             
@@ -357,15 +358,15 @@
                 animation: none;
                 margin: 0;
                 flex: 0 0 auto;
+                padding-right: 10px;
             }
             .hero-content h1 { font-size: 0.6rem; letter-spacing: 1px; margin-bottom: 5px; line-height: 1.4; }
             .hero-content h2 { font-size: 2.8rem; letter-spacing: 3px; margin-right: -3px; }
             .hero-content p { font-size: 0.7rem; letter-spacing: 2px; margin-right: -2px; }
             
+            /* Убираем стрелку на мобильных */
             .scroll-indicator { 
-                display: block; 
-                bottom: 30px; 
-                border-color: rgba(255,255,255,0.8);
+                display: none; 
             }
 
             /* Сетка карточек */
@@ -580,39 +581,37 @@
                 });
             }
 
-            // 6. Частицы в шапке и фоновые пылинки (только для ПК, на мобильных могут подтормаживать)
-            if (!isTouchDevice) {
-                const particlesContainer = document.getElementById('particles');
-                const particleCount = 40;
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    const size = Math.random() * 4 + 2;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${Math.random() * 100}%`;
-                    const duration = Math.random() * 15 + 10;
-                    particle.style.animationDuration = `${duration}s`;
-                    particle.style.animationDelay = `${Math.random() * 10}s`;
-                    particle.style.bottom = `-10px`;
-                    particlesContainer.appendChild(particle);
-                }
+            // 6. Частицы в шапке и фоновые пылинки (ТЕПЕРЬ И НА МОБИЛЬНЫХ)
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = isTouchDevice ? 20 : 40; // Меньше частиц для мобильных, чтобы не тормозило
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                const duration = Math.random() * 15 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.bottom = `-10px`;
+                particlesContainer.appendChild(particle);
+            }
 
-                const pageParticlesContainer = document.getElementById('pageParticles');
-                const pageParticleCount = 20;
-                for (let i = 0; i < pageParticleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('page-particle');
-                    const size = Math.random() * 6 + 2;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${Math.random() * 100}%`;
-                    particle.style.top = `${Math.random() * 100}%`;
-                    const duration = Math.random() * 20 + 15;
-                    particle.style.animationDuration = `${duration}s`;
-                    particle.style.animationDelay = `${Math.random() * 10}s`;
-                    pageParticlesContainer.appendChild(particle);
-                }
+            const pageParticlesContainer = document.getElementById('pageParticles');
+            const pageParticleCount = isTouchDevice ? 10 : 20; // Меньше для мобильных
+            for (let i = 0; i < pageParticleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('page-particle');
+                const size = Math.random() * 6 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                const duration = Math.random() * 20 + 15;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                pageParticlesContainer.appendChild(particle);
             }
         });
     </script>
