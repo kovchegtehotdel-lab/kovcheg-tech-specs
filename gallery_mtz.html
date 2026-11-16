@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Малый зал | Фотогалерея</title>
     <style>
         :root {
@@ -17,7 +17,7 @@
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         html { scroll-behavior: smooth; }
 
@@ -38,11 +38,13 @@
         .cursor-dot {
             width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            display: none;
         }
         .cursor-ring {
             width: 40px; height: 40px; border: 1px solid rgba(197, 160, 89, 0.5); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%);
             transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+            display: none;
         }
         .cursor-ring.hover {
             width: 70px; height: 70px; border-color: var(--primary);
@@ -87,10 +89,18 @@
             margin-bottom: 20px;
         }
 
+        /* Контейнер для верхних ссылок */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
-            margin-top: 15px;
             color: var(--bg-dark);
             text-decoration: none;
             font-size: 0.9rem;
@@ -118,13 +128,12 @@
         .gallery-item {
             position: relative;
             overflow: hidden;
-            border-radius: 8px; /* Чуть больше скругление для премиума */
+            border-radius: 8px;
             cursor: pointer;
             background: #eee;
             aspect-ratio: 4 / 3;
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
-            /* Для плавного появления */
             opacity: 0;
             transform: translateY(30px);
             filter: blur(5px);
@@ -137,7 +146,7 @@
             transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease;
         }
 
-        /* Золотая рамка при наведении */
+        /* Золотая рамка */
         .gallery-item::after {
             content: '';
             position: absolute;
@@ -154,13 +163,8 @@
             z-index: 2;
         }
 
-        .gallery-item:hover {
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-
-        .gallery-item:hover::after {
-            opacity: 1;
-        }
+        .gallery-item:hover { box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        .gallery-item:hover::after { opacity: 1; }
 
         .gallery-item img {
             width: 100%;
@@ -171,56 +175,85 @@
             will-change: transform;
         }
 
-        /* Параллакс-эффект внутри картинки */
-        .gallery-item:hover img {
-            transform: scale(1.05); /* Легкий базовый зум */
-        }
-
-        /* --- ЛАЙТБОКС (ПРЕМИАЛЬНЫЙ) --- */
+        /* --- ЛАЙТБОКС --- */
         .lightbox {
             position: fixed;
             inset: 0;
-            background: rgba(10, 10, 10, 0.98); /* Глубокий черный */
+            background: #000;
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             padding: 20px;
-            backdrop-filter: blur(10px); /* Размытие фона */
+            touch-action: none;
+            overflow: hidden;
         }
 
         .lightbox.active {
             display: flex;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.4s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Контейнер для зума */
+        .lightbox-img-container {
+            max-width: 92vw;
+            max-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 2px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            animation: cinematicIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: zoom-in;
+            position: relative;
         }
+
+        .lightbox-img-container.zoomed { cursor: zoom-out; }
 
         .lightbox img {
-            max-width: 92vw;
-            max-height: 88vh;
+            max-width: 100%;
+            max-height: 85vh;
             object-fit: contain;
-            border-radius: 4px;
-            box-shadow: 0 0 80px rgba(0,0,0,0.9);
-            /* Анимация въезда картинки */
-            animation: zoomIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-origin: center center;
         }
 
-        @keyframes zoomIn {
-            from { transform: scale(0.95); opacity: 0.8; }
+        /* Иконка лупы */
+        .zoom-hint {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .zoom-hint svg { width: 16px; height: 16px; fill: currentColor; }
+
+        @keyframes cinematicIn {
+            from { transform: scale(0.9); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
 
         .lb-btn {
             position: absolute;
             background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.15);
             color: #fff;
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             border-radius: 50%;
             font-size: 1.6rem;
             cursor: pointer;
@@ -230,60 +263,98 @@
             transition: all 0.3s ease;
             user-select: none;
             z-index: 10;
+            backdrop-filter: blur(5px);
         }
 
-        .lb-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            transform: scale(1.1) translateY(-50%); /* Для боковых кнопок */
-        }
+        .lb-btn:hover { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
 
-        /* Исправляем трансформацию для боковых кнопок */
-        .lb-prev:hover, .lb-next:hover {
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .lb-close {
-            top: 20px;
-            right: 20px;
-            transform: none; /* Убираем трансформацию для крестика */
-        }
-        .lb-close:hover {
-            transform: scale(1.1);
-        }
+        .lb-close { top: 20px; right: 20px; transform: none; }
+        .lb-close:hover { transform: scale(1.1); }
 
         .lb-prev { left: 30px; top: 50%; transform: translateY(-50%); }
         .lb-next { right: 30px; top: 50%; transform: translateY(-50%); }
 
+        .lb-prev:hover, .lb-next:hover { transform: translateY(-50%) scale(1.1); }
+
         .lb-counter {
             position: absolute;
-            bottom: 30px;
-            left: 50%;
+            bottom: 30px; left: 50%;
             transform: translateX(-50%);
             color: #d1d1d1;
             font-size: 1rem;
             letter-spacing: 2px;
             background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(197, 160, 89, 0.3); /* Золотая рамка */
+            border: 1px solid rgba(197, 160, 89, 0.3);
             padding: 8px 20px;
             border-radius: 20px;
             backdrop-filter: blur(5px);
         }
 
-        /* --- АДАПТИВНОСТЬ --- */
+        /* --- НИЖНИЕ ССЫЛКИ --- */
+        .bottom-links {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
+            background: var(--bg-body);
+        }
+
+        .bottom-links .nav-links {
+            margin-top: 0;
+        }
+
+        /* --- МЕДИА-ЗАПРОСЫ --- */
+
+        @media (max-width: 1024px) {
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .gallery-hero h2 { font-size: 2.8rem; }
+        }
+
         @media (max-width: 768px) {
             body { cursor: auto; }
             .cursor-dot, .cursor-ring { display: none; }
 
-            .gallery-hero h1 { font-size: 0.8rem; letter-spacing: 2px; }
-            .gallery-hero h2 { font-size: 2.2rem; letter-spacing: 1px; }
-            .gallery-subtitle { font-size: 0.85rem; letter-spacing: 2px; }
-            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 30px 12px 60px; }
-            .lb-btn { width: 42px; height: 42px; font-size: 1.2rem; }
-            .lb-prev { left: 8px; }
-            .lb-next { right: 8px; }
-            .lb-close { top: 8px; right: 8px; }
-            .lb-counter { bottom: 20px; font-size: 0.8rem; padding: 5px 12px; }
+            .gallery-hero { padding: 40px 15px 30px; }
+            .gallery-hero h1 { font-size: 0.75rem; letter-spacing: 2px; }
+            .gallery-hero h2 { font-size: 2rem; letter-spacing: 1px; }
+            .gallery-subtitle { font-size: 0.8rem; letter-spacing: 2px; }
+            
+            .gallery-grid { 
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px; 
+                padding: 20px 10px 50px; 
+            }
+
+            .gallery-item { border-radius: 6px; }
+
+            /* Лайтбокс для мобильных */
+            .lightbox { padding: 0; }
+            .lightbox-img-container { max-width: 100vw; max-height: 80vh; }
+            .lightbox img { max-height: 80vh; }
+
+            .lb-btn {
+                width: 50px; height: 50px; font-size: 1.4rem;
+                background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3);
+            }
+
+            .lb-close { top: 15px; right: 15px; width: 40px; height: 40px; background: rgba(0,0,0,0.8); }
+            .lb-prev { left: 20%; bottom: 20px; top: auto; transform: none; }
+            .lb-next { right: 20%; bottom: 20px; top: auto; transform: none; }
+            .lb-prev:hover, .lb-next:hover { transform: scale(1.1); }
+
+            .lb-counter { bottom: 25px; font-size: 0.85rem; padding: 6px 16px; background: rgba(0,0,0,0.8); }
+            
+            .zoom-hint { display: none; }
+
+            .gallery-item:hover img { transform: none; }
+        }
+
+        @media (max-width: 380px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+            .gallery-hero h2 { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -298,116 +369,106 @@
         <h1>Культурный духовно-просветительский центр «Ковчег»</h1>
         <h2>Малый театральный зал</h2>
         <p class="gallery-subtitle">Техническая фотогалерея</p>
-        <a href="index_mtz.html" class="back-link">← Вернуться к техническому паспорту зала</a>
-        <br>
-        <a href="index.html" class="back-link" style="margin-top: 10px;">← На главную (выбор зала)</a>
+        <div class="nav-links">
+            <a href="index_mtz.html" class="back-link">← Вернуться к техническому паспорту зала</a>
+            <a href="index.html" class="back-link">← На главную (выбор зала)</a>
+        </div>
     </div>
 
     <!-- СЕТКА ФОТО -->
     <div class="gallery-grid" id="galleryGrid"></div>
 
+    <!-- НИЖНИЕ ССЫЛКИ -->
+    <div class="bottom-links">
+        <div class="nav-links">
+            <a href="index_mtz.html" class="back-link">← Вернуться к техническому паспорту зала</a>
+            <a href="index.html" class="back-link">← На главную (выбор зала)</a>
+        </div>
+    </div>
+
     <!-- ЛАЙТБОКС -->
     <div class="lightbox" id="lightbox">
         <button class="lb-btn lb-close" id="lbClose" aria-label="Закрыть">×</button>
         <button class="lb-btn lb-prev" id="lbPrev" aria-label="Предыдущее">‹</button>
-        <img id="lbImage" src="" alt="">
+        
+        <div class="lightbox-img-container" id="lbContainer">
+            <img id="lbImage" src="" alt="">
+        </div>
+
         <button class="lb-btn lb-next" id="lbNext" aria-label="Следующее">›</button>
+        
+        <div class="zoom-hint" id="zoomHint">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></svg>
+            Кликните для увеличения
+        </div>
+
         <div class="lb-counter" id="lbCounter"></div>
     </div>
 
     <script>
-        // Список файлов в логической последовательности
         const photos = [
-            "001_hall_mtz_001_1.jpg",
-            "003_hall_mtz_003_3.jpg",
-            "005_hall_mtz_006_6.jpg",
-            "006_hall_mtz_007_7.jpg",
-            "009_hall_mtz_012_12.jpg",
-            "011_hall_mtz_018_18.jpg",
-            "015_hall_mtz_024_24.jpg",
-            "016_hall_mtz_025_25.jpg",
-            "020_hall_mtz_029_29.jpg",
-            "023_hall_mtz_032_32.jpg",
-            "002_hall_mtz_002_2.jpg",
-            "004_hall_mtz_005_5.jpg",
-            "007_hall_mtz_010_10.jpg",
-            "008_hall_mtz_011_11.jpg",
-            "010_hall_mtz_017_17.jpg",
-            "012_hall_mtz_020_20.jpg",
-            "013_hall_mtz_021_21.jpg",
-            "014_hall_mtz_022_22.jpg",
-            "021_hall_mtz_030_30.jpg",
-            "022_hall_mtz_031_31.jpg",
-            "017_hall_mtz_026_26.jpg",
-            "018_hall_mtz_027_27.jpg",
-            "019_hall_mtz_028_28.jpg",
-            "024_hall_mtz_034_2.jpg",
-            "025_hall_mtz_036_4.jpg",
-            "026_hall_mtz_038_6.jpg",
-            "027_hall_mtz_039_7.jpg",
-            "029_hall_mtz_043_11.jpg",
-            "030_hall_mtz_044_12.jpg",
-            "032_hall_mtz_049_17.jpg",
-            "033_hall_mtz_050_18.jpg",
-            "035_hall_mtz_056_24.jpg",
-            "036_hall_mtz_059_27.jpg",
-            "038_hall_mtz_065_33.jpg",
-            "039_hall_mtz_067_35.jpg",
-            "046_hall_mtz_085_53.jpg",
-            "049_hall_mtz_092_60.jpg",
-            "049a_hall_mtz_081_49.jpg",
-            "028_hall_mtz_042_10.jpg",
-            "031_hall_mtz_045_13.jpg",
-            "034_hall_mtz_053_21.jpg",
-            "037_hall_mtz_062_30.jpg",
-            "040_hall_mtz_069_37.jpg",
-            "041_hall_mtz_071_39.jpg",
-            "042_hall_mtz_076_44.jpg",
-            "043_hall_mtz_078_46.jpg",
-            "044_hall_mtz_082_50.jpg",
-            "045_hall_mtz_084_52.jpg",
-            "047_hall_mtz_087_55.jpg",
-            "048_hall_mtz_090_58.jpg",
-            "050_hall_mtz_095_63.jpg",
-            "051_hall_mtz_097_65.jpg",
-            "052_hall_mtz_098_33.jpg",
-            "053_hall_mtz_099_34.jpg",
-            "054_hall_mtz_100_35.jpg",
-            "055_hall_mtz_102_37.jpg",
-            "056_hall_mtz_103_38.jpg",
-            "057_hall_mtz_104_39.jpg",
-            "058_hall_mtz_105_40.jpg",
-            "059_hall_mtz_107_42.jpg"
+            "001_hall_mtz_001_1.jpg", "003_hall_mtz_003_3.jpg", "005_hall_mtz_006_6.jpg", "006_hall_mtz_007_7.jpg",
+            "009_hall_mtz_012_12.jpg", "011_hall_mtz_018_18.jpg", "015_hall_mtz_024_24.jpg", "016_hall_mtz_025_25.jpg",
+            "020_hall_mtz_029_29.jpg", "023_hall_mtz_032_32.jpg", "002_hall_mtz_002_2.jpg", "004_hall_mtz_005_5.jpg",
+            "007_hall_mtz_010_10.jpg", "008_hall_mtz_011_11.jpg", "010_hall_mtz_017_17.jpg", "012_hall_mtz_020_20.jpg",
+            "013_hall_mtz_021_21.jpg", "014_hall_mtz_022_22.jpg", "021_hall_mtz_030_30.jpg", "022_hall_mtz_031_31.jpg",
+            "017_hall_mtz_026_26.jpg", "018_hall_mtz_027_27.jpg", "019_hall_mtz_028_28.jpg", "024_hall_mtz_034_2.jpg",
+            "025_hall_mtz_036_4.jpg", "026_hall_mtz_038_6.jpg", "027_hall_mtz_039_7.jpg", "029_hall_mtz_043_11.jpg",
+            "030_hall_mtz_044_12.jpg", "032_hall_mtz_049_17.jpg", "033_hall_mtz_050_18.jpg", "035_hall_mtz_056_24.jpg",
+            "036_hall_mtz_059_27.jpg", "038_hall_mtz_065_33.jpg", "039_hall_mtz_067_35.jpg", "046_hall_mtz_085_53.jpg",
+            "049_hall_mtz_092_60.jpg", "049a_hall_mtz_081_49.jpg", "028_hall_mtz_042_10.jpg", "031_hall_mtz_045_13.jpg",
+            "034_hall_mtz_053_21.jpg", "037_hall_mtz_062_30.jpg", "040_hall_mtz_069_37.jpg", "041_hall_mtz_071_39.jpg",
+            "042_hall_mtz_076_44.jpg", "043_hall_mtz_078_46.jpg", "044_hall_mtz_082_50.jpg", "045_hall_mtz_084_52.jpg",
+            "047_hall_mtz_087_55.jpg", "048_hall_mtz_090_58.jpg", "050_hall_mtz_095_63.jpg", "051_hall_mtz_097_65.jpg",
+            "052_hall_mtz_098_33.jpg", "053_hall_mtz_099_34.jpg", "054_hall_mtz_100_35.jpg", "055_hall_mtz_102_37.jpg",
+            "056_hall_mtz_103_38.jpg", "057_hall_mtz_104_39.jpg", "058_hall_mtz_105_40.jpg", "059_hall_mtz_107_42.jpg"
         ];
 
         const basePath = "photos_mtz_web/";
         const grid = document.getElementById("galleryGrid");
         const lightbox = document.getElementById("lightbox");
         const lbImage = document.getElementById("lbImage");
+        const lbContainer = document.getElementById("lbContainer");
         const lbCounter = document.getElementById("lbCounter");
         let currentIndex = 0;
 
+        // Переменные для зума
+        let zoomLevel = 1;
+        const zoomSteps = [1, 1.5, 2, 3, 4];
+        let zoomIndex = 0;
+        
+        // Переменные для пинч-зума
+        let initialDistance = 0;
+        let initialScale = 1;
+
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
         // 1. Кастомный курсор
-        const cursorDot = document.getElementById('cursorDot');
-        const cursorRing = document.getElementById('cursorRing');
-        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+        if (!isMobile) {
+            const cursorDot = document.getElementById('cursorDot');
+            const cursorRing = document.getElementById('cursorRing');
+            cursorDot.style.display = 'block';
+            cursorRing.style.display = 'block';
+            
+            let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX; mouseY = e.clientY;
-            cursorDot.style.left = mouseX + 'px';
-            cursorDot.style.top = mouseY + 'px';
-        });
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; mouseY = e.clientY;
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+            });
 
-        function animateRing() {
-            ringX += (mouseX - ringX) * 0.15;
-            ringY += (mouseY - ringY) * 0.15;
-            cursorRing.style.left = ringX + 'px';
-            cursorRing.style.top = ringY + 'px';
-            requestAnimationFrame(animateRing);
+            function animateRing() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                cursorRing.style.left = ringX + 'px';
+                cursorRing.style.top = ringY + 'px';
+                requestAnimationFrame(animateRing);
+            }
+            animateRing();
         }
-        animateRing();
 
-        // 2. Построение сетки с анимацией появления
+        // 2. Построение сетки
         photos.forEach((file, i) => {
             const item = document.createElement("div");
             item.className = "gallery-item";
@@ -418,34 +479,28 @@
             img.loading = "lazy";
             item.appendChild(img);
             
-            // Навешиваем события наведения для курсора
-            item.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
-            item.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+            if (!isMobile) {
+                const cursorRing = document.getElementById('cursorRing');
+                item.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+                item.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+                
+                item.addEventListener('mousemove', (e) => {
+                    const rect = item.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const moveX = (x - centerX) / centerX * 10;
+                    const moveY = (y - centerY) / centerY * 10;
+                    img.style.transform = `scale(1.1) translate(${moveX}px, ${moveY}px)`;
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    img.style.transform = 'scale(1) translate(0, 0)';
+                });
+            }
             
-            // Клик по фото
             item.addEventListener("click", () => openLightbox(i));
-            
-            // Параллакс-эффект при движении мыши внутри карточки
-            item.addEventListener('mousemove', (e) => {
-                const rect = item.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                // Смещение картинки на 10% от расстояния до центра
-                const moveX = (x - centerX) / centerX * 10;
-                const moveY = (y - centerY) / centerY * 10;
-                
-                img.style.transform = `scale(1.1) translate(${moveX}px, ${moveY}px)`;
-            });
-            
-            // Возврат в исходное положение
-            item.addEventListener('mouseleave', () => {
-                img.style.transform = 'scale(1) translate(0, 0)';
-            });
-            
             grid.appendChild(item);
         });
 
@@ -453,10 +508,9 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    // Добавляем задержку для каскадного эффекта
                     setTimeout(() => {
                         entry.target.classList.add('revealed');
-                    }, index * 50); // 50мс задержка между фото
+                    }, index * 50);
                     observer.unobserve(entry.target);
                 }
             });
@@ -472,16 +526,19 @@
             updateLightbox();
             lightbox.classList.add("active");
             document.body.style.overflow = "hidden";
+            resetZoom();
         }
 
         function closeLightbox() {
             lightbox.classList.remove("active");
             document.body.style.overflow = "";
+            resetZoom();
         }
 
         function updateLightbox() {
             lbImage.src = basePath + photos[currentIndex];
             lbCounter.textContent = (currentIndex + 1) + " / " + photos.length;
+            resetZoom();
         }
 
         function nextPhoto() {
@@ -494,22 +551,160 @@
             updateLightbox();
         }
 
+        // 5. УЛУЧШЕННЫЙ ЗУМ
+        function resetZoom() {
+            zoomIndex = 0;
+            zoomLevel = 1;
+            lbImage.style.transform = `scale(1)`;
+            lbImage.style.transformOrigin = 'center center';
+            lbContainer.classList.remove('zoomed');
+        }
+
+        function toggleZoom(e) {
+            if (e.target.closest('.lb-btn') || e.target.closest('.lb-counter')) return;
+            
+            zoomIndex = (zoomIndex + 1) % zoomSteps.length;
+            zoomLevel = zoomSteps[zoomIndex];
+            
+            if (zoomLevel === 1) {
+                resetZoom();
+            } else {
+                const rect = lbContainer.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width * 100;
+                const y = (e.clientY - rect.top) / rect.height * 100;
+                
+                lbImage.style.transformOrigin = `${x}% ${y}%`;
+                lbImage.style.transform = `scale(${zoomLevel})`;
+                lbContainer.classList.add('zoomed');
+            }
+        }
+
+        lbContainer.addEventListener('click', toggleZoom);
+
+        // Зум колесиком мыши на ПК
+        if (!isMobile) {
+            lbContainer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    if (zoomIndex < zoomSteps.length - 1) {
+                        zoomIndex++;
+                        zoomLevel = zoomSteps[zoomIndex];
+                        lbImage.style.transform = `scale(${zoomLevel})`;
+                        lbContainer.classList.add('zoomed');
+                    }
+                } else {
+                    if (zoomIndex > 0) {
+                        zoomIndex--;
+                        zoomLevel = zoomSteps[zoomIndex];
+                        lbImage.style.transform = `scale(${zoomLevel})`;
+                        if (zoomLevel === 1) resetZoom();
+                    }
+                }
+            }, { passive: false });
+        }
+
+        // Двойной тап для мобильных
+        let lastTap = 0;
+        lbContainer.addEventListener('touchend', (e) => {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0) {
+                e.preventDefault();
+                toggleZoom(e);
+            }
+            lastTap = currentTime;
+        });
+
+        // 6. ПИНЧ-ЗУМ
+        lbContainer.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialScale = zoomLevel;
+            }
+        }, { passive: false });
+
+        lbContainer.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                let newScale = initialScale * (currentDistance / initialDistance);
+                newScale = Math.max(1, Math.min(4, newScale));
+                zoomLevel = newScale;
+                lbImage.style.transform = `scale(${newScale})`;
+                if (newScale > 1) {
+                    lbContainer.classList.add('zoomed');
+                } else {
+                    lbContainer.classList.remove('zoomed');
+                }
+            }
+        }, { passive: false });
+
+        lbContainer.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) {
+                if (zoomLevel === 1) {
+                    zoomIndex = 0;
+                } else {
+                    let closest = 0;
+                    let minDiff = Infinity;
+                    zoomSteps.forEach((step, i) => {
+                        const diff = Math.abs(step - zoomLevel);
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            closest = i;
+                        }
+                    });
+                    zoomIndex = closest;
+                }
+            }
+        });
+
+        // 7. НАВИГАЦИЯ
         document.getElementById("lbClose").addEventListener("click", closeLightbox);
         document.getElementById("lbNext").addEventListener("click", nextPhoto);
         document.getElementById("lbPrev").addEventListener("click", prevPhoto);
 
-        // Клик вне изображения закрывает лайтбокс
         lightbox.addEventListener("click", (e) => {
             if (e.target === lightbox) closeLightbox();
         });
 
-        // Клавиатура
         document.addEventListener("keydown", (e) => {
             if (!lightbox.classList.contains("active")) return;
             if (e.key === "Escape") closeLightbox();
             if (e.key === "ArrowRight") nextPhoto();
             if (e.key === "ArrowLeft") prevPhoto();
         });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        lightbox.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        lightbox.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            if (zoomLevel > 1) return; // Отключаем свайп при увеличении
+            
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (diff > swipeThreshold) {
+                nextPhoto();
+            } else if (diff < -swipeThreshold) {
+                prevPhoto();
+            }
+        }
     </script>
 </body>
 </html>
