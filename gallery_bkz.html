@@ -34,7 +34,7 @@
             overflow-x: hidden;
         }
 
-        /* --- КАСТОМНЫЙ КУРСОР (Только для десктопа) --- */
+        /* --- КАСТОМНЫЙ КУРСОР --- */
         .cursor-dot {
             width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%;
             position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
@@ -172,7 +172,7 @@
             will-change: transform;
         }
 
-        /* --- ЛАЙТБОКС (АДАПТИВНЫЙ) --- */
+        /* --- ЛАЙТБОКС --- */
         .lightbox {
             position: fixed;
             inset: 0;
@@ -182,7 +182,8 @@
             justify-content: center;
             z-index: 1000;
             padding: 20px;
-            touch-action: none; /* Отключаем стандартные жесты браузера */
+            touch-action: none;
+            overflow: hidden; /* Скрываем все, что выходит за пределы */
         }
 
         .lightbox.active {
@@ -195,15 +196,56 @@
             to { opacity: 1; }
         }
 
-        .lightbox img {
+        /* Контейнер для зума */
+        .lightbox-img-container {
             max-width: 92vw;
-            max-height: 85vh; /* Оставляем место для кнопок */
-            object-fit: contain;
+            max-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
             border-radius: 2px;
             box-shadow: 0 0 100px rgba(0,0,0,0.8);
             animation: cinematicIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: zoom-in;
+        }
+
+        .lightbox-img-container.zoomed {
+            cursor: zoom-out;
+        }
+
+        .lightbox img {
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            display: block;
             user-select: none;
             -webkit-user-drag: none;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Иконка лупы */
+        .zoom-hint {
+            position: absolute;
+            bottom: 90px; /* Над счетчиком */
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .zoom-hint svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
         }
 
         @keyframes cinematicIn {
@@ -265,17 +307,30 @@
             backdrop-filter: blur(5px);
         }
 
-        /* --- МЕДИА-ЗАПРОСЫ ДЛЯ ПЛАНШЕТОВ И МОБИЛЬНЫХ --- */
+        /* --- НИЖНИЕ ССЫЛКИ --- */
+        .bottom-links {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 3;
+            background: var(--bg-body);
+        }
 
-        /* Планшеты (от 768px до 1024px) */
+        .bottom-links .back-link {
+            margin: 0 15px;
+            font-size: 1rem;
+        }
+
+        /* --- МЕДИА-ЗАПРОСЫ --- */
+
         @media (max-width: 1024px) {
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
             .gallery-hero h2 { font-size: 2.8rem; }
         }
 
-        /* Мобильные (до 768px) */
         @media (max-width: 768px) {
             body { cursor: auto; }
             .cursor-dot, .cursor-ring { display: none; }
@@ -286,74 +341,40 @@
             .gallery-subtitle { font-size: 0.8rem; letter-spacing: 2px; }
             
             .gallery-grid { 
-                grid-template-columns: repeat(2, 1fr); /* Строго 2 колонки */
+                grid-template-columns: repeat(2, 1fr);
                 gap: 10px; 
                 padding: 20px 10px 50px; 
             }
 
-            .gallery-item {
-                border-radius: 6px;
-            }
+            .gallery-item { border-radius: 6px; }
 
             /* Лайтбокс для мобильных */
-            .lightbox {
-                padding: 0; /* Убираем отступы, чтобы фото было больше */
-            }
+            .lightbox { padding: 0; }
+            .lightbox-img-container { max-width: 100vw; max-height: 80vh; }
+            .lightbox img { max-height: 80vh; }
 
-            .lightbox img {
-                max-width: 100vw;
-                max-height: 80vh;
-                border-radius: 0;
-            }
-
-            /* Кнопки внизу для удобства пальцев */
             .lb-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.4rem;
-                background: rgba(0,0,0,0.6);
-                border-color: rgba(255,255,255,0.3);
+                width: 50px; height: 50px; font-size: 1.4rem;
+                background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.3);
             }
 
-            .lb-close {
-                top: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-                background: rgba(0,0,0,0.8);
-            }
+            .lb-close { top: 15px; right: 15px; width: 40px; height: 40px; background: rgba(0,0,0,0.8); }
+            .lb-prev { left: 20%; bottom: 20px; top: auto; transform: none; }
+            .lb-next { right: 20%; bottom: 20px; top: auto; transform: none; }
+            .lb-prev:hover, .lb-next:hover { transform: scale(1.1); }
 
-            /* Стрелки внизу */
-            .lb-prev { 
-                left: 20%; 
-                bottom: 20px; 
-                top: auto; 
-                transform: none; 
-            }
-            .lb-next { 
-                right: 20%; 
-                bottom: 20px; 
-                top: auto; 
-                transform: none; 
-            }
-            .lb-prev:hover, .lb-next:hover {
-                transform: scale(1.1);
-            }
+            .lb-counter { bottom: 25px; font-size: 0.85rem; padding: 6px 16px; background: rgba(0,0,0,0.8); }
+            
+            /* Скрываем подсказку зума на мобильных (жест интуитивен) */
+            .zoom-hint { display: none; }
 
-            .lb-counter {
-                bottom: 25px;
-                font-size: 0.85rem;
-                padding: 6px 16px;
-                background: rgba(0,0,0,0.8);
-            }
-
-            /* Отключаем параллакс на мобильных (он не нужен) */
             .gallery-item:hover img { transform: none; }
+
+            .bottom-links .back-link { display: block; margin: 10px auto; }
         }
 
-        /* Очень маленькие экраны (до 380px) */
         @media (max-width: 380px) {
-            .gallery-grid { grid-template-columns: 1fr; } /* 1 колонка для самых маленьких */
+            .gallery-grid { grid-template-columns: 1fr; }
             .gallery-hero h2 { font-size: 1.8rem; }
         }
     </style>
@@ -377,17 +398,35 @@
     <!-- СЕТКА ФОТО -->
     <div class="gallery-grid" id="galleryGrid"></div>
 
+    <!-- НИЖНИЕ ССЫЛКИ -->
+    <div class="bottom-links">
+        <a href="index_bkz.html" class="back-link">← Вернуться к техническому паспорту зала</a>
+        <br>
+        <a href="index.html" class="back-link" style="margin-top: 10px;">← На главную (выбор зала)</a>
+    </div>
+
     <!-- ЛАЙТБОКС -->
     <div class="lightbox" id="lightbox">
         <button class="lb-btn lb-close" id="lbClose" aria-label="Закрыть">×</button>
         <button class="lb-btn lb-prev" id="lbPrev" aria-label="Предыдущее">‹</button>
-        <img id="lbImage" src="" alt="">
+        
+        <!-- Контейнер для зума -->
+        <div class="lightbox-img-container" id="lbContainer">
+            <img id="lbImage" src="" alt="">
+        </div>
+
         <button class="lb-btn lb-next" id="lbNext" aria-label="Следующее">›</button>
+        
+        <!-- Подсказка про зум -->
+        <div class="zoom-hint" id="zoomHint">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"/></svg>
+            Нажмите для увеличения
+        </div>
+
         <div class="lb-counter" id="lbCounter"></div>
     </div>
 
     <script>
-        // Список файлов
         const photos = [
             "hall_pano_9774.jpg", "hall_108_007.jpg", "hall_110_009.jpg", "hall_113_012.jpg", "hall_078_032.jpg",
             "hall_089_043.jpg", "hall_088_042.jpg", "hall_064_018.jpg", "hall_283_114.jpg", "hall_047_001.jpg",
@@ -404,13 +443,14 @@
         const grid = document.getElementById("galleryGrid");
         const lightbox = document.getElementById("lightbox");
         const lbImage = document.getElementById("lbImage");
+        const lbContainer = document.getElementById("lbContainer");
         const lbCounter = document.getElementById("lbCounter");
         let currentIndex = 0;
+        let isZoomed = false;
 
-        // Проверка на мобильное устройство
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-        // 1. Кастомный курсор (только для десктопа)
+        // 1. Кастомный курсор
         if (!isMobile) {
             const cursorDot = document.getElementById('cursorDot');
             const cursorRing = document.getElementById('cursorRing');
@@ -451,7 +491,6 @@
                 item.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
                 item.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
                 
-                // Параллакс только для десктопа
                 item.addEventListener('mousemove', (e) => {
                     const rect = item.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -488,22 +527,25 @@
             observer.observe(item);
         });
 
-        // 4. Лайтбокс с поддержкой свайпов
+        // 4. Лайтбокс
         function openLightbox(index) {
             currentIndex = index;
             updateLightbox();
             lightbox.classList.add("active");
             document.body.style.overflow = "hidden";
+            resetZoom();
         }
 
         function closeLightbox() {
             lightbox.classList.remove("active");
             document.body.style.overflow = "";
+            resetZoom();
         }
 
         function updateLightbox() {
             lbImage.src = basePath + photos[currentIndex];
             lbCounter.textContent = (currentIndex + 1) + " / " + photos.length;
+            resetZoom(); // Сбрасываем зум при смене фото
         }
 
         function nextPhoto() {
@@ -516,6 +558,49 @@
             updateLightbox();
         }
 
+        // 5. ЗУМ (Лупа)
+        function resetZoom() {
+            isZoomed = false;
+            lbContainer.classList.remove('zoomed');
+            lbImage.style.transform = 'scale(1)';
+        }
+
+        function toggleZoom(e) {
+            // Предотвращаем зум при клике на кнопки навигации
+            if (e.target.closest('.lb-btn') || e.target.closest('.lb-counter')) return;
+            
+            isZoomed = !isZoomed;
+            
+            if (isZoomed) {
+                // Вычисляем точку клика для фокусировки
+                const rect = lbContainer.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width * 100;
+                const y = (e.clientY - rect.top) / rect.height * 100;
+                
+                lbImage.style.transformOrigin = `${x}% ${y}%`;
+                lbImage.style.transform = 'scale(2.5)';
+                lbContainer.classList.add('zoomed');
+            } else {
+                lbImage.style.transform = 'scale(1)';
+                lbContainer.classList.remove('zoomed');
+            }
+        }
+
+        lbContainer.addEventListener('click', toggleZoom);
+
+        // Для мобильных - двойной тап
+        let lastTap = 0;
+        lbContainer.addEventListener('touchend', (e) => {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0) {
+                // Двойной тап
+                e.preventDefault();
+                toggleZoom(e);
+            }
+            lastTap = currentTime;
+        });
+
         document.getElementById("lbClose").addEventListener("click", closeLightbox);
         document.getElementById("lbNext").addEventListener("click", nextPhoto);
         document.getElementById("lbPrev").addEventListener("click", prevPhoto);
@@ -524,7 +609,7 @@
             if (e.target === lightbox) closeLightbox();
         });
 
-        // Управление клавиатурой (для десктопа)
+        // Управление клавиатурой
         document.addEventListener("keydown", (e) => {
             if (!lightbox.classList.contains("active")) return;
             if (e.key === "Escape") closeLightbox();
@@ -532,7 +617,7 @@
             if (e.key === "ArrowLeft") prevPhoto();
         });
 
-        // 5. СВАЙПЫ ДЛЯ МОБИЛЬНЫХ
+        // 6. СВАЙПЫ
         let touchStartX = 0;
         let touchEndX = 0;
 
@@ -546,14 +631,12 @@
         }, { passive: true });
 
         function handleSwipe() {
-            const swipeThreshold = 50; // Минимальная длина свайпа
+            const swipeThreshold = 50;
             const diff = touchStartX - touchEndX;
 
             if (diff > swipeThreshold) {
-                // Свайп влево -> следующее фото
                 nextPhoto();
             } else if (diff < -swipeThreshold) {
-                // Свайп вправо -> предыдущее фото
                 prevPhoto();
             }
         }
