@@ -322,49 +322,57 @@
         /* --- АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ --- */
         @media (max-width: 768px) {
             body { cursor: auto; }
-            .cursor-dot, .cursor-ring, .page-particles { display: none; }
+            .cursor-dot, .cursor-ring { display: none; }
             .preloader { display: none; } 
 
-            /* Шапка */
+            /* Шапка: логотип слева, текст справа, всё в зоне неба */
             .hero { 
-                height: auto; 
-                min-height: 70vh; 
+                height: 100vh; 
+                min-height: 600px;
                 display: flex; 
-                flex-direction: column; 
-                justify-content: flex-start; 
-                padding: 100px 5% 60px; 
+                justify-content: space-between; 
+                align-items: flex-start;
+                padding: 40px 5% 20px; 
+                position: relative;
             }
             
             .logo-container { 
-                position: static; 
-                margin: 0 auto 20px; 
+                position: relative; 
+                top: 0; left: 0; 
+                margin: 0; 
                 opacity: 1; 
                 animation: none;
-                text-align: center;
+                flex: 0 0 auto;
             }
-            .logo-container img { height: 80px; }
+            .logo-container img { height: 60px; }
             
             .hero-content { 
-                position: static; 
+                position: relative; 
+                top: 0; right: 0;
                 display: flex; 
                 flex-direction: column; 
-                align-items: center; 
-                text-align: center; 
+                align-items: flex-end; 
+                text-align: right; 
                 opacity: 1; 
                 animation: none;
-                margin-bottom: 40px;
+                margin: 0;
+                flex: 0 0 auto;
             }
-            .hero-content h1 { font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 10px; }
-            .hero-content h2 { font-size: 3.5rem; letter-spacing: 4px; margin-right: -4px; }
-            .hero-content p { font-size: 0.8rem; letter-spacing: 3px; margin-right: -3px; }
+            .hero-content h1 { font-size: 0.6rem; letter-spacing: 1px; margin-bottom: 5px; line-height: 1.4; }
+            .hero-content h2 { font-size: 2.8rem; letter-spacing: 3px; margin-right: -3px; }
+            .hero-content p { font-size: 0.7rem; letter-spacing: 2px; margin-right: -2px; }
             
-            .scroll-indicator { display: none; }
+            .scroll-indicator { 
+                display: block; 
+                bottom: 30px; 
+                border-color: rgba(255,255,255,0.8);
+            }
 
             /* Сетка карточек */
             .halls-container { 
                 padding: 40px 15px 60px; 
                 gap: 25px; 
-                grid-template-columns: 1fr; /* Одна колонка */
+                grid-template-columns: 1fr;
             }
             
             .hall-card { 
@@ -374,21 +382,21 @@
             }
             .hall-card:hover { transform: none; }
             .hall-card:hover .hall-card-img { transform: none; }
-            .hall-card::before, .hall-card::after { display: none; } /* Убираем эффекты для тача */
+            .hall-card::before, .hall-card::after { display: none; }
 
             .hall-card-img { height: 200px; }
             .hall-card-content { padding: 25px; }
             .hall-card-content h3 { font-size: 1.3rem; }
             .hall-card-content p { font-size: 0.9rem; margin-bottom: 20px; }
             
-            /* Кнопки в карточке */
             .hall-card-actions { flex-direction: column; gap: 15px; align-items: flex-start; }
             .card-btn { font-size: 1rem; }
         }
 
         /* --- САМЫЕ УЗКИЕ ЭКРАНЫ --- */
         @media (max-width: 380px) {
-            .hero-content h2 { font-size: 2.8rem; }
+            .hero-content h2 { font-size: 2.4rem; }
+            .logo-container img { height: 50px; }
             .hall-card-img { height: 180px; }
         }
     </style>
@@ -473,10 +481,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Проверка на тач-устройство
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-            // 1. Прелоадер (только для ПК, на мобильных скрыт через CSS)
+            // 1. Прелоадер (только для ПК)
             if (!isTouchDevice) {
                 const preloader = document.getElementById('preloader');
                 setTimeout(() => {
@@ -573,7 +580,7 @@
                 });
             }
 
-            // 6. Частицы в шапке (только для ПК)
+            // 6. Частицы в шапке и фоновые пылинки (только для ПК, на мобильных могут подтормаживать)
             if (!isTouchDevice) {
                 const particlesContainer = document.getElementById('particles');
                 const particleCount = 40;
@@ -591,7 +598,6 @@
                     particlesContainer.appendChild(particle);
                 }
 
-                // 7. Фоновые пылинки по всей странице (только для ПК)
                 const pageParticlesContainer = document.getElementById('pageParticles');
                 const pageParticleCount = 20;
                 for (let i = 0; i < pageParticleCount; i++) {
