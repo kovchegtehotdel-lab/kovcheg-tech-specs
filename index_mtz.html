@@ -793,8 +793,18 @@
                         if (!response.ok) return;
                         const contentLength = response.headers.get('Content-Length');
                         if (contentLength) {
-                            const sizeMB = (parseInt(contentLength) / (1024 * 1024)).toFixed(1);
-                            sizeSpan.textContent = `(${sizeMB} МБ)`;
+                            const bytes = parseInt(contentLength);
+                            let sizeText;
+
+                            if (bytes >= 1024 * 1024) {
+                                // Если файл больше или равен 1 МБ — показываем в МБ
+                                sizeText = (bytes / (1024 * 1024)).toFixed(1) + ' МБ';
+                            } else {
+                                // Если меньше 1 МБ — показываем в КБ
+                                sizeText = Math.round(bytes / 1024) + ' КБ';
+                            }
+
+                            sizeSpan.textContent = `(${sizeText})`;
                         }
                     })
                     .catch(() => {
