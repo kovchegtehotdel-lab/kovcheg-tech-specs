@@ -394,6 +394,15 @@
 
         .btn-icon { margin-right: 10px; font-size: 1.1rem; }
 
+        /* Размер файла */
+        .file-size {
+            font-size: 0.75rem;
+            color: #999;
+            margin-left: 8px;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
         /* --- НИЖНЯЯ НАВИГАЦИЯ --- */
         .bottom-nav {
             text-align: center;
@@ -510,6 +519,12 @@
                 padding: 14px 20px;
                 font-size: 0.95rem;
             }
+            .file-size {
+                display: block;
+                margin-left: 0;
+                margin-top: 4px;
+                text-align: center;
+            }
         }
 
         /* --- САМЫЕ УЗКИЕ ЭКРАНЫ (max-width: 380px) --- */
@@ -580,8 +595,8 @@
                 <div class="content-inner">
                     <p>Управление расположено на технической галерее. Микшерный пульт: Behringer X32 Compact. Радиосистемы. Акустика стерео: dB Technologies LVX P10 (до 8 шт), активный сабвуфер Yamaha DXS 18, оборудование по запросу.</p>
                     <div class="download-group">
-                        <a href="files_mtz/02-1-Kovcheg_SmallHall_Audio_Specs_RU.pdf" class="btn magnetic" download>
-                            <span class="btn-icon">⬇</span> Скачать спецификацию (PDF)
+                        <a href="files_mtz/02-1-Kovcheg_SmallHall_Audio_Specs_RU.pdf" class="btn magnetic" target="_blank" rel="noopener">
+                            <span class="btn-icon">⬇</span> Скачать спецификацию (PDF) <span class="file-size"></span>
                         </a>
                     </div>
                 </div>
@@ -598,14 +613,14 @@
                 <div class="content-inner">
                     <p>Управление на технической галерее MA Lighting grandMA2 (command wing + стационарный ПК с ПО grandMA2 onPC). Приборы: LED Profile Spot Eurolite (6), Wash JB Systems (8), Spot Showtec Phantom (4), Mini B LightCraft (4), Slim PAR (2), HAZE Antari HZ-500 (1).</p>
                     <div class="download-group">
-                        <a href="files_mtz/02-2-Kovcheg_SmallHall_Light_Specs_RU.pdf" class="btn magnetic" download>
-                            <span class="btn-icon">⬇</span> Спецификация по свету (PDF)
+                        <a href="files_mtz/02-2-Kovcheg_SmallHall_Light_Specs_RU.pdf" class="btn magnetic" target="_blank" rel="noopener">
+                            <span class="btn-icon">⬇</span> Спецификация по свету (PDF) <span class="file-size"></span>
                         </a>
-                        <a href="files_mtz/02-2-A-Kovcheg_SmallHall_Light_Plot_RU.pdf" class="btn btn-outline magnetic" download>
-                            <span class="btn-icon">⬇</span> Light Plot (PDF)
+                        <a href="files_mtz/02-2-A-Kovcheg_SmallHall_Light_Plot_RU.pdf" class="btn btn-outline magnetic" target="_blank" rel="noopener">
+                            <span class="btn-icon">⬇</span> Light Plot (PDF) <span class="file-size"></span>
                         </a>
-                        <a href="files_mtz/02-2-B-Kovcheg_SmallHall_DMX_Addresses_RU.pdf" class="btn btn-outline magnetic" download>
-                            <span class="btn-icon">⬇</span> DMX-адреса приборов (PDF)
+                        <a href="files_mtz/02-2-B-Kovcheg_SmallHall_DMX_Addresses_RU.pdf" class="btn btn-outline magnetic" target="_blank" rel="noopener">
+                            <span class="btn-icon">⬇</span> DMX-адреса приборов (PDF) <span class="file-size"></span>
                         </a>
                     </div>
                 </div>
@@ -622,8 +637,8 @@
                 <div class="content-inner">
                     <p>Управление на технической галерее. Проектор Optoma ZU820TST (лазерный, 8200 ANSI). Моторизованный экран Lumien Master Control (343 × 457 см). Управление: Apple Mac mini Pro M2, ПО Resolume Arena.</p>
                     <div class="download-group">
-                        <a href="files_mtz/02-3-Kovcheg_SmallHall_Video_Specs_RU.pdf" class="btn magnetic" download>
-                            <span class="btn-icon">⬇</span> Скачать спецификацию (PDF)
+                        <a href="files_mtz/02-3-Kovcheg_SmallHall_Video_Specs_RU.pdf" class="btn magnetic" target="_blank" rel="noopener">
+                            <span class="btn-icon">⬇</span> Скачать спецификацию (PDF) <span class="file-size"></span>
                         </a>
                     </div>
                 </div>
@@ -765,9 +780,30 @@
                 el.style.transition = 'opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease';
                 observer.observe(el);
             });
+
+            // 5. Автоматическое определение размера PDF-файлов
+            const pdfLinks = document.querySelectorAll('.btn[href$=".pdf"]');
+            pdfLinks.forEach(link => {
+                const url = link.href;
+                const sizeSpan = link.querySelector('.file-size');
+                if (!sizeSpan) return;
+
+                fetch(url, { method: 'HEAD' })
+                    .then(response => {
+                        if (!response.ok) return;
+                        const contentLength = response.headers.get('Content-Length');
+                        if (contentLength) {
+                            const sizeMB = (parseInt(contentLength) / (1024 * 1024)).toFixed(1);
+                            sizeSpan.textContent = `(${sizeMB} МБ)`;
+                        }
+                    })
+                    .catch(() => {
+                        // Если не удалось получить размер — просто молчим
+                    });
+            });
         });
     </script>
-	<!-- Поиск по техническим документам -->
-<script src="search.js" defer></script>
+    <!-- Поиск по техническим документам -->
+    <script src="search.js" defer></script>
 </body>
 </html>
