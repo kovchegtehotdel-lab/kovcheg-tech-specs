@@ -566,15 +566,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-            // 1. Прелоадер (только для ПК)
-            if (!isTouchDevice) {
-                const preloader = document.getElementById('preloader');
-                setTimeout(() => {
-                    preloader.classList.add('loaded');
-                    document.body.style.overflow = 'auto';
-                }, 2000); 
-                document.body.style.overflow = 'hidden';
-            }
+            // 1. Прелоадер (работает на всех устройствах)
+            const preloader = document.getElementById('preloader');
+            const preloaderDuration = isTouchDevice ? 1200 : 2000; // На мобильных — 1.2 сек, на ПК — 2 сек
+            setTimeout(() => {
+                preloader.classList.add('loaded');
+                document.body.style.overflow = 'auto';
+            }, preloaderDuration); 
+            document.body.style.overflow = 'hidden';
 
             // 2. Кастомный курсор (только для ПК)
             if (!isTouchDevice) {
